@@ -7,15 +7,38 @@ import { use } from "react"
 import { OrderContext } from "@/providers/order"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { io } from "socket.io-client"
+import { useEffect, useState } from "react"
 
 interface Props{
     orders: OrderProps[]
 }
 
+let socket: any
+
 export function Orders({ orders }: Props){
     const { isOpen, onRequestOpen } = use(OrderContext)
+    const [currentOrders, setCurrentOrders] = useState<OrderProps[]>(orders)
     const router = useRouter()
-     
+    
+    useEffect(() => {
+    socket = io("https://pizzaria-backend-production-bccd.up.railway.app") // Altere para seu IP se for mobile
+
+    socket.on("connect", () => {
+      console.log("✅ Conectado ao socket:", socket.id)
+    })
+
+    socket.on("newOrder", (order: OrderProps) => {
+      console.log("📦 Novo pedido recebido:", order)
+      setCurrentOrders(prev => [order, ...prev])
+      toast.success(`Novo pedido na mesa ${order.table}`)
+    })
+
+    return () => {
+      socket.off("newOrder")
+      socket.disconnect()
+    }
+  }, [])
 
     async function handleDetailOrder(order_id: string){
        await onRequestOpen(order_id)
