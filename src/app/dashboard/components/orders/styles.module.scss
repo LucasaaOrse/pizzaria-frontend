@@ -1,64 +1,96 @@
+.container {
+  max-width: 720px;
+  margin: 20px auto;
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 
-.container{
-    max-width: 720px;
-    margin: 20px auto;
-    padding: 0 16px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-
-    h1{
-        color: var(--white);
-    }
-
-}
-
-.header{
-    display: flex;
-    gap: 14px;
-    margin-bottom: 16px;
-    margin-top: 24px;
-
-    button{
-        background-color: transparent;
-        border: 0;
-    }
-
-}
-
-
-.listOrders{
-    display: flex;
-    gap: 16px;
-    flex-direction: column;
-
-
-}
-
-.orderItem{
-    display: flex;
-    background-color: var(--dark-900);
-    align-items: center;
-    border: 0;
-    font-size: 18px;
-    border-radius: 8px;
+  h1 {
     color: var(--white);
-    transition: all 0.5s;
-
-    &:hover{
-        filter: brightness(1.40);
-    }
-
+  }
 }
 
-.tag{
-    width: 9px;
-    background-color: var(--green-900);
-    border-radius: 6px 0 0 6px;
-    height: 60px;
-    margin-right: 16px;
+.header {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+  margin-top: 24px;
+
+  button {
+    background-color: transparent;
+    border: 0;
+  }
 }
 
-.emptyItem{
-    color: var(--gray-100);
+.listOrders {
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+}
+
+.emptyItem {
+  color: var(--gray-100);
+}
+
+/* Container de cada linha: pedido + chat */
+.orderRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* Botão que mostra mesa e tag colorida */
+.orderItem {
+  flex: 1;
+  display: flex;
+  background-color: var(--dark-900);
+  align-items: center;
+  border: 0;
+  font-size: 18px;
+  border-radius: 8px;
+  color: var(--white);
+  transition: filter 0.3s;
+  text-align: left;
+  padding: 12px 16px; /* um pouco mais de espaçamento */
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+/* A “bolinha” colorida */
+.tag {
+  width: 9px;
+  height: 60px;
+  border-radius: 6px 0 0 6px;
+  margin-right: 16px;
+  background-color: var(--green-900); /* padrão: verde */
+}
+
+/* Se precisar de classe para pendente, pode usar: */
+.tag.pending {
+  background-color: #f1c40f; /* amarelo */
+}
+
+/* Ícone de chat (💬) */
+.chatIcon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 8px;
+  color: var(--white);
+  transition: transform 0.1s;
+}
+.chatIcon:hover {
+  transform: scale(1.1);
+}
+
+/* Texto auxiliar “(pendente)” / “(enviado)” */
+.orderItem small {
+  margin-left: 8px;
+  color: var(--gray-100);
+  font-size: 0.75em;
 }

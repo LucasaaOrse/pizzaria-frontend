@@ -81,16 +81,31 @@ export function Orders({ orders }: Props) {
                 className={styles.orderItem}
                 onClick={() => handleDetailOrder(order.id)}
               >
-                <div className={styles.tag}></div>
-                <span>Mesa {order.table}</span>
+                {/* tag colorida: amarelo se draft, verde se não */}
+                <div
+                  className={styles.tag}
+                  style={{
+                    backgroundColor: order.draft ? "#f1c40f" : "#3fffa3",
+                  }}
+                />
+                <span>
+                  Mesa {order.table}{" "}
+                  <small style={{ color: "#ccc", marginLeft: 8 }}>
+                    {order.draft ? "pendente" : "enviado"}
+                  </small>
+                </span>
               </button>
-              <button
-                className={styles.chatIcon}
-                onClick={() => setChatOrderId(String(order.id))}
-                title="Chat Mesa"
-              >
-                💬
-              </button>
+
+              {/* Chat só para pedidos ainda em draft */}
+              {order.draft && (
+                <button
+                  className={styles.chatIcon}
+                  onClick={() => setChatOrderId(String(order.id))}
+                  title="Chat Mesa"
+                >
+                  💬
+                </button>
+              )}
             </div>
           ))}
         </section>
