@@ -5,7 +5,8 @@ import io from "socket.io-client";
 import styles from "./ChatWindow.module.scss";
 
 interface ChatWindowProps {
-  orderId: string;
+  orderId: string;     // mantém a sala do socket
+  tableNumber: number; // mostra no header
   onClose: () => void;
 }
 
@@ -18,7 +19,7 @@ interface Message {
 
 const socket = io("https://pizzaria-backend-production-bccd.up.railway.app");
 
-export function ChatWindow({ orderId, onClose }: ChatWindowProps) {
+export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
   const [chat, setChat] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -60,10 +61,11 @@ function send() {
 
 
   return (
-    <div className={styles.overlay}>
+<div className={styles.overlay}>
       <div className={styles.window}>
         <header className={styles.header}>
-          <h2>Chat Mesa {orderId}</h2>
+          {/* use tableNumber aqui */}
+          <h2>Chat Mesa {tableNumber}</h2>
           <button onClick={onClose}>×</button>
         </header>
         <div className={styles.messages}>

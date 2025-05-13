@@ -21,7 +21,7 @@ let socket: any;
 export function Orders({ orders }: Props) {
   const { isOpen, onRequestOpen } = use(OrderContext);
   const [currentOrders, setCurrentOrders] = useState<OrderProps[]>(orders);
-  const [chatOrderId, setChatOrderId] = useState<string | null>(null);
+  const [chatOrder, setChatOrder] = useState<{id: string; table: number} | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export function Orders({ orders }: Props) {
               {order.draft && (
                 <button
                   className={styles.chatIcon}
-                  onClick={() => setChatOrderId(String(order.id))}
+                  onClick={() => setChatOrder({ id: String(order.id), table: order.table })}
                   title="Chat Mesa"
                 >
                   💬
@@ -115,10 +115,11 @@ export function Orders({ orders }: Props) {
 
       {isOpen && <Modalorder />}
 
-      {chatOrderId && (
+      {chatOrder && (
         <ChatWindow
-          orderId={chatOrderId}
-          onClose={() => setChatOrderId(null)}
+          orderId={chatOrder.id}      // para socket.join
+          tableNumber={chatOrder.table} // para exibir no header
+          onClose={() => setChatOrder(null)}
         />
       )}
     </>
