@@ -79,7 +79,9 @@ export function Orders({ orders }: Props) {
             <div key={order.id} className={styles.orderRow}>
               <button
                 className={styles.orderItem}
-                onClick={() => handleDetailOrder(order.id)}
+                /* desabilita clique se draft */
+                onClick={() => order.draft ? undefined : handleDetailOrder(order.id)}
+                style={{ cursor: order.draft ? "not-allowed" : "pointer", opacity: order.draft ? 0.6 : 1 }}
               >
                 {/* tag colorida: amarelo se draft, verde se não */}
                 <div

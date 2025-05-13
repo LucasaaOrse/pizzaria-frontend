@@ -27,10 +27,9 @@ export function ChatWindow({ orderId, onClose }: ChatWindowProps) {
   socket.emit("joinRoom", { room: orderId });
 
   socket.on("newMessage", (raw: any) => {
-    // raw vem com { room, author, message, timestamp }
     const msg: Message = {
-      id: String(raw.timestamp),      // ou use uuid se preferir
-      author: raw.author,            // já é "garcom" ou "cozinha"
+      id: String(raw.timestamp),
+      author: raw.author,
       message: raw.message,
       timestamp: raw.timestamp,
     };
@@ -43,7 +42,7 @@ export function ChatWindow({ orderId, onClose }: ChatWindowProps) {
   };
 }, [orderId]);
 
-  function send() {
+function send() {
   if (!text.trim()) return;
   const payload = {
     room: orderId,
@@ -51,19 +50,14 @@ export function ChatWindow({ orderId, onClose }: ChatWindowProps) {
     message: text,
     timestamp: Date.now(),
   };
-  // envia ao servidor
   socket.emit("sendMessage", payload);
-
-  // adiciona localmente, transformando em Message
-  const localMsg: Message = {
-    id: String(payload.timestamp),
-    author: payload.author,
-    message: payload.message,
-    timestamp: payload.timestamp,
-  };
-  setChat(prev => [...prev, localMsg]);
+  setChat(prev => [
+    ...prev,
+    { id: String(payload.timestamp), author: payload.author, message: payload.message, timestamp: payload.timestamp }
+  ]);
   setText("");
 }
+
 
   return (
     <div className={styles.overlay}>
