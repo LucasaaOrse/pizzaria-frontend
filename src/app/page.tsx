@@ -29,7 +29,7 @@ export default function Home() {
       cookieStore.set("session", token, {
         maxAge,
         path: "/",
-        httpOnly: true,                       // mais seguro
+        httpOnly: false,                       // mais seguro
         secure: process.env.NODE_ENV === "production",
       });
     } catch (err) {

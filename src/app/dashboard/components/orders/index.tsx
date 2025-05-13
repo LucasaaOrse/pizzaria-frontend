@@ -60,14 +60,14 @@ export function Orders({ orders }: Props){
             </section>
 
             <section className={styles.listOrders}>
-                {orders.length === 0 && (
+                {currentOrders.length === 0 && (
                     <span className={styles.emptyItem}>
                         Nenhum pedido aberto no momento
                     </span>
                 )}
 
 
-                {orders.map( order => (
+                {currentOrders.map(order => (
                     <button key={order.id} className={styles.orderItem} onClick={() => handleDetailOrder(order.id)}> 
                     <div className={styles.tag}></div>
                     <span>Mesa {order.table}</span>
