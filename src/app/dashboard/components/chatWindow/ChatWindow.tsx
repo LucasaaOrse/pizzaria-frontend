@@ -28,6 +28,8 @@ export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
   socket.emit("joinRoom", { room: orderId });
 
   socket.on("newMessage", (raw: any) => {
+    console.log("🔴 [web] newMessage recebido:", raw);
+
     const msg: Message = {
       id: String(raw.timestamp),
       author: raw.author,
@@ -51,6 +53,9 @@ function send() {
     message: text,
     timestamp: Date.now(),
   };
+
+  console.log("🔵 [web] emitindo sendMessage:", payload);
+
   socket.emit("sendMessage", payload);
   setChat(prev => [
     ...prev,
