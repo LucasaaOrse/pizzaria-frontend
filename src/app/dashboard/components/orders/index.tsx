@@ -33,6 +33,7 @@ export function Orders({ orders }: Props){
     });
 
     socket.on("orderFinished", ({ id }: { id: string }) => {
+      console.log("Recebi orderFinished:", id);
       setCurrentOrders(prev => prev.filter(o => String(o.id) !== String(id)));
     });
 
