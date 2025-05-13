@@ -1,88 +1,109 @@
-"use client"
-import styles from "./styles.module.scss"
-import { RefreshCcw } from "lucide-react"
-import { OrderProps } from "@/lib/order.type"
-import { Modalorder } from "../modal"
-import { use } from "react"
-import { OrderContext } from "@/providers/order"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { io } from "socket.io-client"
-import { useEffect, useState } from "react"
+"use client";
 
-interface Props{
-    orders: OrderProps[]
+import React, { useEffect, useState } from "react";
+import styles from "./styles.module.scss";
+import { RefreshCcw } from "lucide-react";
+import { OrderProps } from "@/lib/order.type";
+import { Modalorder } from "../modal";
+import { use } from "react";
+import { OrderContext } from "@/providers/order";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { io } from "socket.io-client";
+import { ChatWindow } from "../chatWindow/ChatWindow";
+
+interface Props {
+  orders: OrderProps[];
 }
 
-let socket: any
+let socket: any;
 
-export function Orders({ orders }: Props){
-    const { isOpen, onRequestOpen } = use(OrderContext)
-    const [currentOrders, setCurrentOrders] = useState<OrderProps[]>(orders)
-    const router = useRouter()
-    
-    useEffect(() => {
-    socket = io("https://pizzaria-backend-production-bccd.up.railway.app") // Altere para seu IP se for mobile
+export function Orders({ orders }: Props) {
+  const { isOpen, onRequestOpen } = use(OrderContext);
+  const [currentOrders, setCurrentOrders] = useState<OrderProps[]>(orders);
+  const [chatOrderId, setChatOrderId] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    socket = io("https://pizzaria-backend-production-bccd.up.railway.app");
 
     socket.on("connect", () => {
-      console.log("✅ Conectado ao socket:", socket.id)
-    })
+      console.log("✅ Conectado ao socket:", socket.id);
+    });
 
-     socket.on("newOrder", (order: OrderProps) => {
-      setCurrentOrders(prev => [order, ...prev]);
+    socket.on("newOrder", (order: OrderProps) => {
+      setCurrentOrders((prev) => [order, ...prev]);
     });
 
     socket.on("orderFinished", ({ id }: { id: string }) => {
       console.log("Recebi orderFinished:", id);
-      setCurrentOrders(prev => prev.filter(o => String(o.id) !== String(id)));
+      setCurrentOrders((prev) =>
+        prev.filter((o) => String(o.id) !== String(id))
+      );
     });
 
     return () => {
+      socket.off("newOrder");
       socket.off("orderFinished");
-      socket.off("newOrder")
-      socket.disconnect()
-    }
-  }, [])
+      socket.disconnect();
+    };
+  }, []);
 
-    async function handleDetailOrder(order_id: string){
-       await onRequestOpen(order_id)
-    }
+  async function handleDetailOrder(order_id: string) {
+    await onRequestOpen(order_id);
+  }
 
-    function handleRefresh(){
-        router.refresh()
-        toast.success("Pedidos atualizados")
-    }
+  function handleRefresh() {
+    router.refresh();
+    toast.success("Pedidos atualizados");
+  }
 
-    return(
-        <>
-        <main className={styles.container}>
-            <section className={styles.header}>
-                <h1>Últimos pedidos</h1>
-                <button>
-                    <RefreshCcw size={24} color="#3fffa3" onClick={handleRefresh}/>
-                </button>
-            </section>
+  return (
+    <>
+      <main className={styles.container}>
+        <section className={styles.header}>
+          <h1>Últimos pedidos</h1>
+          <button onClick={handleRefresh}>
+            <RefreshCcw size={24} color="#3fffa3" />
+          </button>
+        </section>
 
-            <section className={styles.listOrders}>
-                {currentOrders.length === 0 && (
-                    <span className={styles.emptyItem}>
-                        Nenhum pedido aberto no momento
-                    </span>
-                )}
+        <section className={styles.listOrders}>
+          {currentOrders.length === 0 && (
+            <span className={styles.emptyItem}>
+              Nenhum pedido aberto no momento
+            </span>
+          )}
 
+          {currentOrders.map((order) => (
+            <div key={order.id} className={styles.orderRow}>
+              <button
+                className={styles.orderItem}
+                onClick={() => handleDetailOrder(order.id)}
+              >
+                <div className={styles.tag}></div>
+                <span>Mesa {order.table}</span>
+              </button>
+              <button
+                className={styles.chatIcon}
+                onClick={() => setChatOrderId(String(order.id))}
+                title="Chat Mesa"
+              >
+                💬
+              </button>
+            </div>
+          ))}
+        </section>
+      </main>
 
-                {currentOrders.map(order => (
-                    <button key={order.id} className={styles.orderItem} onClick={() => handleDetailOrder(order.id)}> 
-                    <div className={styles.tag}></div>
-                    <span>Mesa {order.table}</span>
-                    </button>
-                ) )}
+      {isOpen && <Modalorder />}
 
-            </section>
-        </main>
-    
-        { isOpen && <Modalorder/>}           
-    </>            
-    )
-
+      {chatOrderId && (
+        <ChatWindow
+          orderId={chatOrderId}
+          onClose={() => setChatOrderId(null)}
+        />
+      )}
+    </>
+  );
 }

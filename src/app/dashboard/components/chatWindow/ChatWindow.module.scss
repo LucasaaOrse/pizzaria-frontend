@@ -1,0 +1,74 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.window {
+  background: #1d1d2e;
+  width: 400px;
+  max-width: 90%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.header {
+  background: #101026;
+  padding: 8px 12px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+}
+.message {
+  margin-bottom: 8px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+.incoming {
+  background: #2a2a40;
+  align-self: flex-start;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+.outgoing {
+  background: #3fffa3;
+  align-self: flex-end;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+.author {
+  font-size: 10px;
+  color: #888;
+}
+.footer {
+  padding: 8px;
+  background: #101026;
+  display: flex;
+  gap: 8px;
+}
+.footer input {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: none;
+  background: #2a2a40;
+  color: #fff;
+}
+.footer button {
+  padding: 6px 12px;
+  background: #3fffa3;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
