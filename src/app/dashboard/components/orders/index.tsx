@@ -28,13 +28,16 @@ export function Orders({ orders }: Props){
       console.log("✅ Conectado ao socket:", socket.id)
     })
 
-    socket.on("newOrder", (order: OrderProps) => {
-      console.log("📦 Novo pedido recebido:", order)
-      setCurrentOrders(prev => [order, ...prev])
-      toast.success(`Novo pedido na mesa ${order.table}`)
-    })
+     socket.on("newOrder", (order: OrderProps) => {
+      setCurrentOrders(prev => [order, ...prev]);
+    });
+
+    socket.on("orderFinished", ({ id }: { id: string }) => {
+      setCurrentOrders(prev => prev.filter(o => String(o.id) !== String(id)));
+    });
 
     return () => {
+      socket.off("orderFinished");
       socket.off("newOrder")
       socket.disconnect()
     }

@@ -93,7 +93,6 @@ export function OrderProvider({ children }: OrderProviderProps){
      }
 
      toast.success("Pedido finalizado com sucesso")
-     router.refresh();
      setIsOpen(false)
 
     }
