@@ -30,6 +30,11 @@ const socket = io("https://pizzaria-backend-production-bccd.up.railway.app",{
 }
 );
 
+function getTokenFromCookie(): string | null {
+  const match = document.cookie.match(/(?:^|; )session=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
   const [chat, setChat] = useState<Message[]>([]);
   const [text, setText] = useState("");
@@ -38,18 +43,32 @@ export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
   useEffect(() => {
     // 🔄 1) busca histórico do backend
    (async () => {
-     try {
-       const history = await api.get<RawMessage[]>(`/messages/${orderId}`);
-       setChat(history.data.map(h => ({
-         id: String(new Date(h.timestamp).getTime()),
-         author: h.author,
-         message: h.message,
-         timestamp: new Date(h.timestamp).getTime()
-       })));
-     } catch (err) {
-       console.error("Erro ao buscar histórico de mensagens:", err);
-     }
-   })()
+      const token = getTokenFromCookie();
+      if (!token) {
+        console.error("Sem token, não posso buscar histórico");
+        return;
+      }
+      try {
+        const { data: history } = await api.get<RawMessage[]>(
+          `/messages/${orderId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setChat(
+          history.map((h) => ({
+            id: String(h.timestamp),
+            author: h.author,
+            message: h.message,
+            timestamp: h.timestamp,
+          }))
+        );
+      } catch (err) {
+        console.error("Erro ao buscar histórico de mensagens:", err);
+      }
+    })();
 
   socket.emit("joinRoom", { room: String(orderId) });
 
