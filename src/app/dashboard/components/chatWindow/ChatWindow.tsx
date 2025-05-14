@@ -35,7 +35,7 @@ export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
     // 🔄 1) busca histórico do backend
    (async () => {
      try {
-       const history = await api.get<Message[]>(`/messages/${orderId}`);
+       const history = await api.get<RawMessage[]>(`/messages/${orderId}`);
        setChat(history.data.map(h => ({
          id: String(new Date(h.timestamp).getTime()),
          author: h.author,
