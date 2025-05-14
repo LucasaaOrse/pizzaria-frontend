@@ -9,6 +9,8 @@ interface ChatWindowProps {
   orderId: string;     // mantém a sala do socket
   tableNumber: number; // mostra no header
   onClose: () => void;
+  setHasUnread: React.Dispatch<React.SetStateAction<boolean>>; // ✅ Adicione isto
+  isOpen: boolean; // ✅ Adicione isto
 }
 
 interface RawMessage {
@@ -36,6 +38,7 @@ function getTokenFromCookie(): string | null {
 }
 
 export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
+  const [unreadChats, setUnreadChats] = useState<Record<string,boolean>>({});
   const [chat, setChat] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);

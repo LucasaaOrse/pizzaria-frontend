@@ -1,0 +1,24 @@
+.iconWrapper {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 50;
+  cursor: pointer;
+}
+
+.iconContainer {
+  background-color: #3fd1ff;
+  padding: 12px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.badge {
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  right: 0;
+}

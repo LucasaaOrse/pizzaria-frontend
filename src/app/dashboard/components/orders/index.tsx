@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { io } from "socket.io-client";
 import { ChatWindow } from "../chatWindow/ChatWindow";
+import { ChatButton } from "../ChatButton/ChatButton"; // ✅ Importado
 
 interface Props {
   orders: OrderProps[];
@@ -22,6 +23,7 @@ export function Orders({ orders }: Props) {
   const { isOpen, onRequestOpen } = use(OrderContext);
   const [currentOrders, setCurrentOrders] = useState<OrderProps[]>(orders);
   const [chatOrder, setChatOrder] = useState<{id: string; table: number} | null>(null);
+  const [hasUnread, setHasUnread] = useState(false); // ✅ Novo estado
   const router = useRouter();
 
   useEffect(() => {
@@ -70,6 +72,8 @@ export function Orders({ orders }: Props) {
     toast.success("Pedidos atualizados");
   }
 
+  const activeDraft = currentOrders.find((o) => o.draft);
+
   return (
     <>
       <main className={styles.container}>
@@ -91,11 +95,9 @@ export function Orders({ orders }: Props) {
             <div key={order.id} className={styles.orderRow}>
               <button
                 className={styles.orderItem}
-                /* desabilita clique se draft */
                 onClick={() => order.draft ? undefined : handleDetailOrder(order.id)}
                 style={{ cursor: order.draft ? "not-allowed" : "pointer", opacity: order.draft ? 0.6 : 1 }}
               >
-                {/* tag colorida: amarelo se draft, verde se não */}
                 <div
                   className={styles.tag}
                   style={{
@@ -110,7 +112,6 @@ export function Orders({ orders }: Props) {
                 </span>
               </button>
 
-              {/* Chat só para pedidos ainda em draft */}
               {order.draft && (
                 <button
                   className={styles.chatIcon}
@@ -127,11 +128,21 @@ export function Orders({ orders }: Props) {
 
       {isOpen && <Modalorder />}
 
+      {/* ✅ Chat flutuante */}
+      {activeDraft && (
+        <ChatButton
+          onClick={() => setChatOrder({ id: String(activeDraft.id), table: activeDraft.table })}
+          hasUnread={hasUnread}
+        />
+      )}
+
       {chatOrder && (
         <ChatWindow
-          orderId={chatOrder.id}      // para socket.join
-          tableNumber={chatOrder.table} // para exibir no header
+          orderId={chatOrder.id}
+          tableNumber={chatOrder.table}
           onClose={() => setChatOrder(null)}
+          setHasUnread={setHasUnread} // ✅ Define leitura
+          isOpen={!!chatOrder} // ✅ Identifica se o chat está visível
         />
       )}
     </>
