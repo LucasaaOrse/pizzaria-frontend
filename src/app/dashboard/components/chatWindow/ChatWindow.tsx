@@ -9,8 +9,6 @@ interface ChatWindowProps {
   orderId: string;     // mantém a sala do socket
   tableNumber: number; // mostra no header
   onClose: () => void;
-  setHasUnread: React.Dispatch<React.SetStateAction<boolean>>; // ✅ Adicione isto
-  isOpen: boolean; // ✅ Adicione isto
 }
 
 interface RawMessage {

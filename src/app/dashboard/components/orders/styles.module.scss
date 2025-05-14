@@ -94,3 +94,27 @@
   color: var(--gray-100);
   font-size: 0.75em;
 }
+.chatIcon {
+  position: relative;
+  transition: transform 0.2s ease;
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+.chatIconUnread {
+  animation: pulse 1s infinite;
+}
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: #ff4f4b;
+  border-radius: 50%;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.3); }
+}

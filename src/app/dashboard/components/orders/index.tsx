@@ -1,3 +1,4 @@
+// components/Orders.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { io } from "socket.io-client";
 import { ChatWindow } from "../chatWindow/ChatWindow";
-import { ChatButton } from "../ChatButton/ChatButton"; // ✅ Importado
+import clsx from "clsx";
 
 interface Props {
   orders: OrderProps[];
@@ -22,46 +23,58 @@ let socket: any;
 export function Orders({ orders }: Props) {
   const { isOpen, onRequestOpen } = use(OrderContext);
   const [currentOrders, setCurrentOrders] = useState<OrderProps[]>(orders);
-  const [chatOrder, setChatOrder] = useState<{id: string; table: number} | null>(null);
-  const [hasUnread, setHasUnread] = useState(false); // ✅ Novo estado
+
+  // mantém quais chats estão abertos
+  const [openChats, setOpenChats] = useState<string[]>([]);
+
+  // ids de pedidos com mensagens não lidas
+  const [unreadIds, setUnreadIds] = useState<string[]>([]);
+
   const router = useRouter();
 
   useEffect(() => {
     socket = io("https://pizzaria-backend-production-bccd.up.railway.app");
 
+    // 1) quando chegar newMessage, se o chat não estiver aberto, marca como não lido
+    socket.on("newMessage", (raw: any & { room: string }) => {
+      if (!openChats.includes(raw.room)) {
+        setUnreadIds(prev =>
+          prev.includes(raw.room) ? prev : [...prev, raw.room]
+        );
+      }
+    });
+
     socket.on("connect", () => {
-      console.log("✅ Conectado ao socket:", socket.id);
+      console.log("✅ Socket conectado:", socket.id);
     });
 
     socket.on("newOrder", (order: OrderProps) => {
-  setCurrentOrders((prev) => {
-    const alreadyExists = prev.find((o) => String(o.id) === String(order.id));
-    
-    // Se já existe, substitui (útil quando o draft muda de true → false)
-    if (alreadyExists) {
-      return prev.map((o) =>
-        String(o.id) === String(order.id) ? order : o
-      );
-    }
-
-    // Se não existe, adiciona normalmente
-    return [order, ...prev];
-  });
-});
+      setCurrentOrders(prev => {
+        const exists = prev.find(o => String(o.id) === String(order.id));
+        if (exists) {
+          return prev.map(o =>
+            String(o.id) === String(order.id) ? order : o
+          );
+        }
+        return [order, ...prev];
+      });
+    });
 
     socket.on("orderFinished", ({ id }: { id: string }) => {
-      console.log("Recebi orderFinished:", id);
-      setCurrentOrders((prev) =>
-        prev.filter((o) => String(o.id) !== String(id))
+      setCurrentOrders(prev =>
+        prev.filter(o => String(o.id) !== String(id))
       );
+      // opcional: ao finalizar, limpa badge caso exista
+      setUnreadIds(prev => prev.filter(x => x !== String(id)));
     });
 
     return () => {
       socket.off("newOrder");
       socket.off("orderFinished");
+      socket.off("newMessage");
       socket.disconnect();
     };
-  }, []);
+  }, [openChats]);
 
   async function handleDetailOrder(order_id: string) {
     await onRequestOpen(order_id);
@@ -71,8 +84,6 @@ export function Orders({ orders }: Props) {
     router.refresh();
     toast.success("Pedidos atualizados");
   }
-
-  const activeDraft = currentOrders.find((o) => o.draft);
 
   return (
     <>
@@ -91,17 +102,22 @@ export function Orders({ orders }: Props) {
             </span>
           )}
 
-          {currentOrders.map((order) => (
+          {currentOrders.map(order => (
             <div key={order.id} className={styles.orderRow}>
               <button
                 className={styles.orderItem}
-                onClick={() => order.draft ? undefined : handleDetailOrder(order.id)}
-                style={{ cursor: order.draft ? "not-allowed" : "pointer", opacity: order.draft ? 0.6 : 1 }}
+                onClick={() =>
+                  order.draft ? undefined : handleDetailOrder(order.id)
+                }
+                style={{
+                  cursor: order.draft ? "not-allowed" : "pointer",
+                  opacity: order.draft ? 0.6 : 1
+                }}
               >
                 <div
                   className={styles.tag}
                   style={{
-                    backgroundColor: order.draft ? "#f1c40f" : "#3fffa3",
+                    backgroundColor: order.draft ? "#f1c40f" : "#3fffa3"
                   }}
                 />
                 <span>
@@ -114,11 +130,22 @@ export function Orders({ orders }: Props) {
 
               {order.draft && (
                 <button
-                  className={styles.chatIcon}
-                  onClick={() => setChatOrder({ id: String(order.id), table: order.table })}
+                  className={clsx(styles.chatIcon, {
+                    [styles.chatIconUnread]: unreadIds.includes(String(order.id))
+                  })}
+                  onClick={() => {
+                    const id = String(order.id);
+                    // abre o chat
+                    setOpenChats(prev => [...prev, id]);
+                    // limpa badge
+                    setUnreadIds(prev => prev.filter(x => x !== id));
+                  }}
                   title="Chat Mesa"
                 >
                   💬
+                  {unreadIds.includes(String(order.id)) && (
+                    <span className={styles.badge} />
+                  )}
                 </button>
               )}
             </div>
@@ -128,23 +155,19 @@ export function Orders({ orders }: Props) {
 
       {isOpen && <Modalorder />}
 
-      {/* ✅ Chat flutuante */}
-      {activeDraft && (
-        <ChatButton
-          onClick={() => setChatOrder({ id: String(activeDraft.id), table: activeDraft.table })}
-          hasUnread={hasUnread}
-        />
-      )}
-
-      {chatOrder && (
-        <ChatWindow
-          orderId={chatOrder.id}
-          tableNumber={chatOrder.table}
-          onClose={() => setChatOrder(null)}
-          setHasUnread={setHasUnread} // ✅ Define leitura
-          isOpen={!!chatOrder} // ✅ Identifica se o chat está visível
-        />
-      )}
+      {openChats.map(id => {
+        const o = currentOrders.find(o => String(o.id) === id)!;
+        return (
+          <ChatWindow
+            key={id}
+            orderId={id}
+            tableNumber={o.table}
+            onClose={() =>
+              setOpenChats(prev => prev.filter(x => x !== id))
+            }
+          />
+        );
+      })}
     </>
   );
 }
