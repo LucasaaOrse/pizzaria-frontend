@@ -30,19 +30,28 @@
   padding: 12px;
   overflow-y: auto;
 }
+.messages .message p {
+  /* certifica que use a cor correta conforme a bolha */
+  color: inherit;
+}
+
 .message {
   margin-bottom: 8px;
   max-width: 80%;
   word-wrap: break-word;
 }
 .incoming {
-  background: #2a2a40;
+  /* mensagens do garçom (alinhadas à esquerda) */
+  background: #3fd1ff;       /* azul claro */
+  color: #101026;            /* texto escuro */
   align-self: flex-start;
   padding: 6px 10px;
   border-radius: 6px;
 }
 .outgoing {
-  background: #3fffa3;
+  /* mensagens da cozinha (alinhadas à direita) */
+  background: #ffffff;       /* branco */
+  color: #101026;            /* texto escuro */
   align-self: flex-end;
   padding: 6px 10px;
   border-radius: 6px;
@@ -62,7 +71,7 @@
   padding: 6px 8px;
   border-radius: 4px;
   border: none;
-  background: #2a2a40;
+  background: #2a2a40;  /* mantém esse tom escuro */
   color: #fff;
 }
 .footer button {
