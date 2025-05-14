@@ -25,7 +25,7 @@ export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  socket.emit("joinRoom", { room: orderId });
+  socket.emit("joinRoom", { room: String(orderId) });
 
   socket.on("newMessage", (raw: any) => {
     console.log("🔴 [web] newMessage recebido:", raw);

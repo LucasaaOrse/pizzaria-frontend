@@ -32,8 +32,20 @@ export function Orders({ orders }: Props) {
     });
 
     socket.on("newOrder", (order: OrderProps) => {
-      setCurrentOrders((prev) => [order, ...prev]);
-    });
+  setCurrentOrders((prev) => {
+    const alreadyExists = prev.find((o) => String(o.id) === String(order.id));
+    
+    // Se já existe, substitui (útil quando o draft muda de true → false)
+    if (alreadyExists) {
+      return prev.map((o) =>
+        String(o.id) === String(order.id) ? order : o
+      );
+    }
+
+    // Se não existe, adiciona normalmente
+    return [order, ...prev];
+  });
+});
 
     socket.on("orderFinished", ({ id }: { id: string }) => {
       console.log("Recebi orderFinished:", id);
