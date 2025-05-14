@@ -24,7 +24,11 @@ interface Message {
   timestamp: number;
 }
 
-const socket = io("https://pizzaria-backend-production-bccd.up.railway.app");
+const socket = io("https://pizzaria-backend-production-bccd.up.railway.app",{
+  withCredentials: true,
+  transports: ["websocket"]
+}
+);
 
 export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
   const [chat, setChat] = useState<Message[]>([]);
