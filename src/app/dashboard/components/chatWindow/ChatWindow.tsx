@@ -3,11 +3,18 @@
 import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import styles from "./ChatWindow.module.scss";
+import { api } from "@/services/api";
 
 interface ChatWindowProps {
   orderId: string;     // mantém a sala do socket
   tableNumber: number; // mostra no header
   onClose: () => void;
+}
+
+interface RawMessage {
+  author: "garcom" | "cozinha";
+  message: string;
+  timestamp: number;
 }
 
 interface Message {
@@ -25,6 +32,21 @@ export function ChatWindow({ orderId, tableNumber, onClose }: ChatWindowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 🔄 1) busca histórico do backend
+   (async () => {
+     try {
+       const history = await api.get<Message[]>(`/messages/${orderId}`);
+       setChat(history.data.map(h => ({
+         id: String(new Date(h.timestamp).getTime()),
+         author: h.author,
+         message: h.message,
+         timestamp: new Date(h.timestamp).getTime()
+       })));
+     } catch (err) {
+       console.error("Erro ao buscar histórico de mensagens:", err);
+     }
+   })()
+
   socket.emit("joinRoom", { room: String(orderId) });
 
   socket.on("newMessage", (raw: any) => {
