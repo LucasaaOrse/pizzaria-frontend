@@ -1,9 +1,10 @@
 // src/app/dashboard/stock/page.tsx
 "use client";
-
 import React, { useState, useEffect } from "react";
+import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Plus } from "lucide-react";
+import { toast } from "sonner";
 import { api } from "@/services/api";
 
 interface StockItem {
@@ -18,7 +19,16 @@ export default function StockPage() {
   const [items, setItems] = useState<StockItem[]>([]);
   const [types, setTypes] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("todos");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    type: "",
+    unit: "",
+    quantity: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
 
   async function loadData() {
     setLoading(true);
@@ -30,7 +40,8 @@ export default function StockPage() {
       setItems(resItems.data);
       setTypes(resTypes.data);
     } catch (err) {
-      console.error("Erro ao carregar estoque:", err);
+      console.error(err);
+      toast.error("Falha ao carregar estoque");
     } finally {
       setLoading(false);
     }
@@ -40,17 +51,52 @@ export default function StockPage() {
     loadData();
   }, []);
 
-  const filteredItems = filter === "todos"
+  const filtered = filter === "todos"
     ? items
-    : items.filter(item => item.type === filter);
+    : items.filter((i) => i.type === filter);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  }
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    // validação simples
+    if (!form.name || !form.type || !form.unit || Number(form.quantity) <= 0) {
+      return toast.error("Preencha todos os campos corretamente");
+    }
+    setSubmitting(true);
+    try {
+      await api.post("/stock", {
+        name: form.name,
+        type: form.type,
+        unit: form.unit,
+        quantity: Number(form.quantity),
+      });
+      toast.success("Item adicionado ao estoque");
+      setModalOpen(false);
+      setForm({ name: "", type: "", unit: "", quantity: "" });
+      loadData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao adicionar item");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <main className={styles.container}>
       <section className={styles.header}>
         <h1>Estoque</h1>
-        <button onClick={loadData} title="Atualizar">
-          <RefreshCcw size={24} color="#3fffa3" />
-        </button>
+        <div>
+          <button onClick={loadData} title="Atualizar">
+            <RefreshCcw size={24} color="#3fffa3" />
+          </button>
+          <button onClick={() => setModalOpen(true)} title="Adicionar item">
+            <Plus size={24} color="#3fffa3" />
+          </button>
+        </div>
       </section>
 
       <div className={styles.filters}>
@@ -60,7 +106,7 @@ export default function StockPage() {
         >
           Todos
         </button>
-        {types.map(t => (
+        {types.map((t) => (
           <button
             key={t}
             className={filter === t ? styles.activeFilter : ""}
@@ -74,17 +120,17 @@ export default function StockPage() {
       <section className={styles.listOrders}>
         {loading ? (
           <span className={styles.emptyItem}>Carregando...</span>
-        ) : filteredItems.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <span className={styles.emptyItem}>Nenhum item encontrado</span>
         ) : (
-          filteredItems.map(item => (
+          filtered.map((item) => (
             <div key={item.id} className={styles.orderRow}>
               <div className={styles.orderItem}>
                 <div
                   className={styles.tag}
                   style={{
                     backgroundColor:
-                      item.type === "ingrediente" ? "#f1c40f" : "#3fffa3"
+                      item.type === "ingrediente" ? "#f1c40f" : "#3fffa3",
                   }}
                 />
                 <span>
@@ -99,10 +145,7 @@ export default function StockPage() {
                 className={styles.chatIcon}
                 title="Adicionar quantidade"
                 onClick={() => {
-                  // aqui você pode exibir um prompt ou modal
-                  const q = prompt("Informe a quantidade a adicionar:");
-                  if (!q) return;
-                  // depois, chamar: api.post(`/stock/${item.id}/addStock`, { quantity: Number(q) })
+                  /* ... */
                 }}
               >
                 ➕
@@ -111,6 +154,69 @@ export default function StockPage() {
           ))
         )}
       </section>
+
+      {/* Modal de criação */}
+      <ReactModal
+        isOpen={modalOpen}
+        onRequestClose={() => setModalOpen(false)}
+        ariaHideApp={false}
+        className={styles.modal}
+        overlayClassName={styles.overlay}
+      >
+        <h2>Novo Item de Estoque</h2>
+        <form onSubmit={handleCreate} className={styles.form}>
+          <label>
+            Nome
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+            />
+          </label>
+          <label>
+            Tipo
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+            >
+              <option value="">Selecione</option>
+              {types.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </label>
+          <label>
+            Unidade
+            <input
+              name="unit"
+              value={form.unit}
+              onChange={handleChange}
+            />
+          </label>
+          <label>
+            Quantidade
+            <input
+              name="quantity"
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.quantity}
+              onChange={handleChange}
+            />
+          </label>
+          <footer className={styles.formFooter}>
+            <button
+              type="button"
+              onClick={() => setModalOpen(false)}
+              disabled={submitting}
+            >
+              Cancelar
+            </button>
+            <button type="submit" disabled={submitting}>
+              {submitting ? "Salvando..." : "Salvar"}
+            </button>
+          </footer>
+        </form>
+      </ReactModal>
     </main>
   );
 }
