@@ -38,6 +38,7 @@ export function Orders({ orders }: Props) {
   }, [openChats]);
 
    useEffect(() => {
+    console.log("Orders useEffect montou")
     socket = io("https://pizzaria-backend-production-bccd.up.railway.app");
 
     socket.on("connect", () => {
