@@ -37,12 +37,19 @@ export function Orders({ orders }: Props) {
 
     // 1) quando chegar newMessage, se o chat não estiver aberto, marca como não lido
     socket.on("newMessage", (raw: any & { room: string }) => {
-      if (!openChats.includes(raw.room)) {
-        setUnreadIds(prev =>
-          prev.includes(raw.room) ? prev : [...prev, raw.room]
-        );
-      }
+      console.log("🏷️ newMessage em Orders.tsx:", {
+      room: raw.room,
+      openChats,
+      unreadBefore: unreadIds
     });
+      if (!openChats.includes(raw.room)) {
+      setUnreadIds(prev => {
+        const next = prev.includes(raw.room) ? prev : [...prev, raw.room];
+        console.log("➕ marcando como não lido:", raw.room, "→", next);
+        return next;
+      });
+    }
+  });
 
     socket.on("connect", () => {
       console.log("✅ Socket conectado:", socket.id);
