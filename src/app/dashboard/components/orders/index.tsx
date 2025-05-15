@@ -135,9 +135,11 @@ export function Orders({ orders }: Props) {
                   })}
                   onClick={() => {
                     const id = String(order.id);
-                    // abre o chat
-                    setOpenChats(prev => [...prev, id]);
-                    // limpa badge
+                    setOpenChats(prev => {
+                      if (!prev.includes(id)) return [...prev, id];
+                      return prev;
+                    });
+                    // limpa a badge ao abrir
                     setUnreadIds(prev => prev.filter(x => x !== id));
                   }}
                   title="Chat Mesa"
