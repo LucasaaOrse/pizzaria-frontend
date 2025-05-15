@@ -46,12 +46,19 @@ export function Orders({ orders }: Props) {
 
     // 3) listener de newMessage lê sempre openChatsRef.current
     socket.on("newMessage", (raw: any & { room: string }) => {
-      console.log("🏷️ newMessage em Orders:", raw.room, "abertos:", openChatsRef.current);
+      console.groupCollapsed("✉️ [Orders] newMessage recebido");
+      console.log("raw:", raw);
+      console.log("raw.room:", raw.room);
+      console.log("openChatsRef.current:", openChatsRef.current);
+      console.log("unreadIds antes:", unreadIds);
       if (!openChatsRef.current.includes(raw.room)) {
-        setUnreadIds(prev =>
-          prev.includes(raw.room) ? prev : [...prev, raw.room]
-        );
+        setUnreadIds(prev => {
+          const next = prev.includes(raw.room) ? prev : [...prev, raw.room];
+          console.log("→ marcando como não lido:", raw.room, "→", next);
+          return next;
+        });
       }
+      console.groupEnd();
     });
 
     // 4) mantém seus handlers de newOrder e orderFinished
