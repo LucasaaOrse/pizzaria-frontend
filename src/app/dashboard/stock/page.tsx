@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./styles.module.scss";
 import { RefreshCcw } from "lucide-react";
 
@@ -16,16 +16,27 @@ interface Props {
 }
 
 
-export default function Stock({ items }: Props) {
+export default function Stockpage() {
   const [filter, setFilter] = useState<"todos" | "ingrediente" | "produto">("todos");
+  const [items, setItems] = useState<StockItem[]>([]);
 
-  const filteredItems = filter === "todos" ? items : items.filter(item => item.type === filter);
+   useEffect(() => {
+    setItems([
+      { id: "1", name: "Farinha", type: "ingrediente", quantity: 20 },
+      { id: "2", name: "Molho de tomate", type: "ingrediente", quantity: 15 },
+      { id: "3", name: "Pizza Margherita", type: "produto", quantity: 5 },
+    ]);
+  }, []);
+
+  const filteredItems = filter === "todos"
+    ? items
+    : items.filter(item => item.type === filter);
 
   return (
     <main className={styles.container}>
       <section className={styles.header}>
         <h1>Estoque</h1>
-        <button onClick={() => location.reload()}>
+        <button onClick={() => window.location.reload()}>
           <RefreshCcw size={24} color="#3fffa3" />
         </button>
       </section>
@@ -61,16 +72,22 @@ export default function Stock({ items }: Props) {
                 <div
                   className={styles.tag}
                   style={{
-                    backgroundColor: item.type === "ingrediente" ? "#f1c40f" : "#3fffa3"
+                    backgroundColor:
+                      item.type === "ingrediente" ? "#f1c40f" : "#3fffa3"
                   }}
                 />
                 <span>
                   {item.name}
-                  <small style={{ marginLeft: 12 }}>Qtd: {item.quantity}</small>
+                  <small style={{ marginLeft: 12 }}>
+                    Qtd: {item.quantity}
+                  </small>
                 </span>
               </div>
 
-              <button className={styles.chatIcon} title="Adicionar quantidade">
+              <button
+                className={styles.chatIcon}
+                title="Adicionar quantidade"
+              >
                 ➕
               </button>
             </div>
