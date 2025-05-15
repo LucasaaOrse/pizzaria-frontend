@@ -45,6 +45,11 @@ export function Orders({ orders }: Props) {
       console.log("✅ Socket conectado:", socket.id);
     });
 
+    orders.forEach(o => {
+      if (o.draft) {
+        socket.emit("joinRoom", { room: String(o.id) });
+      }
+    });
     // 3) listener de newMessage lê sempre openChatsRef.current
     socket.on("newMessage", (raw: any & { room: string }) => {
       console.groupCollapsed("✉️ [Orders] newMessage recebido");
@@ -71,6 +76,7 @@ export function Orders({ orders }: Props) {
             String(o.id) === String(order.id) ? order : o
           );
         }
+        socket.emit("joinRoom", { room: String(order.id) });
         return [order, ...prev];
       });
     });
@@ -78,6 +84,7 @@ export function Orders({ orders }: Props) {
     socket.on("orderFinished", ({ id }: { id: string }) => {
       setCurrentOrders(prev => prev.filter(o => String(o.id) !== String(id)));
       setUnreadIds(prev => prev.filter(x => x !== String(id)));
+      socket.emit("leaveRoom", { room: String(id) });
     });
 
     return () => {
