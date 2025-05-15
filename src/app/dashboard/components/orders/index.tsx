@@ -38,12 +38,13 @@ export function Orders({ orders }: Props) {
   }, [openChats]);
 
    useEffect(() => {
-    console.log("Orders useEffect montou")
     socket = io("https://pizzaria-backend-production-bccd.up.railway.app");
 
     socket.on("connect", () => {
       console.log("✅ Socket conectado:", socket.id);
     });
+
+    
 
     orders.forEach(o => {
       if (o.draft) {
@@ -87,7 +88,16 @@ export function Orders({ orders }: Props) {
       socket.emit("leaveRoom", { room: String(id) });
     });
 
+    socket.on("orderDeleted", ({ id }: { id: string }) => {
+      setCurrentOrders(prev => prev.filter(o => String(o.id) !== String(id)));
+      setUnreadIds(prev => prev.filter(x => x !== String(id)));
+      setOpenChats(prev => prev.filter(x => x !== String(id)));
+      socket.emit("leaveRoom", { room: String(id) });
+      console.log("🗑️ Pedido removido via socket:", id);
+    });
+
     return () => {
+      socket.off("orderDeleted");
       socket.disconnect();
     };
   }, []);
