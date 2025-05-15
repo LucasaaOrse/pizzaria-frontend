@@ -89,10 +89,18 @@ export function Orders({ orders }: Props) {
     });
 
     socket.on("orderDeleted", ({ id }: { id: string }) => {
-      setCurrentOrders(prev => prev.filter(o => String(o.id) !== String(id)));
+      setCurrentOrders(prev => {
+        const order = prev.find(o => String(o.id) === String(id));
+        if (order) {
+          toast.info(`Pedido da mesa ${order.table} foi cancelado`);
+        }
+        return prev.filter(o => String(o.id) !== String(id));
+      });
+
       setUnreadIds(prev => prev.filter(x => x !== String(id)));
       setOpenChats(prev => prev.filter(x => x !== String(id)));
       socket.emit("leaveRoom", { room: String(id) });
+
       console.log("🗑️ Pedido removido via socket:", id);
     });
 
@@ -128,7 +136,17 @@ export function Orders({ orders }: Props) {
             </span>
           )}
 
-          {currentOrders.map(order => (
+          {[...currentOrders]
+              .sort((a, b) => {
+                // pedidos prontos (draft: false) vão para cima
+                if (!a.draft && b.draft) return -1;
+                if (a.draft && !b.draft) return 1;
+
+                // se os dois forem iguais (ambos prontos ou ambos pendentes),
+                // ordena pelo id crescente (mais antigo primeiro)
+                return Number(a.id) - Number(b.id);
+              })
+              .map(order => (
             <div key={order.id} className={styles.orderRow}>
               <button
                 className={styles.orderItem}
