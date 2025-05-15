@@ -1,4 +1,4 @@
-// src/app/dashboard/stock/styles.module.scss
+/* src/app/dashboard/stock/styles.module.scss */
 
 .container {
   max-width: 720px;
@@ -8,10 +8,6 @@
   flex-direction: column;
   background: var(--dark-700);
   min-height: 100vh;
-
-  h1 {
-    color: var(--white);
-  }
 }
 
 .header {
@@ -19,6 +15,8 @@
   justify-content: space-between;
   align-items: center;
   margin: 24px 0 16px;
+
+  h1 { color: var(--white); }
 
   button {
     background: transparent;
@@ -31,7 +29,7 @@
   display: flex;
   gap: 12px;
   margin-bottom: 16px;
-  
+
   button {
     padding: 6px 12px;
     background: var(--dark-900);
@@ -40,9 +38,7 @@
     color: var(--white);
     transition: filter 0.2s;
 
-    &:hover {
-      filter: brightness(1.1);
-    }
+    &:hover { filter: brightness(1.1); }
   }
 
   .activeFilter {
@@ -79,8 +75,6 @@
   border-radius: 8px;
   color: var(--white);
   font-size: 1rem;
-  border: none;
-  cursor: default;
 }
 
 .tag {
@@ -88,7 +82,7 @@
   height: 48px;
   border-radius: 4px 0 0 4px;
   margin-right: 12px;
-  background-color: var(--green-900); // ingredientes/verdes por padrão
+  background-color: var(--green-900);
 }
 
 .chatIcon {
@@ -99,7 +93,6 @@
   color: var(--white);
   padding: 8px;
   transition: transform 0.2s;
-}
-.chatIcon:hover {
-  transform: scale(1.1);
+
+  &:hover { transform: scale(1.1); }
 }

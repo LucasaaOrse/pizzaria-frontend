@@ -1,31 +1,43 @@
+// src/app/dashboard/stock/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
 import styles from "./styles.module.scss";
 import { RefreshCcw } from "lucide-react";
+import { api } from "@/services/api";
 
 interface StockItem {
   id: string;
   name: string;
-  type: "ingrediente" | "produto";
+  unit: string;
+  type: string;
   quantity: number;
 }
 
-interface Props {
-  items: StockItem[];
-}
-
-
-export default function Stockpage() {
-  const [filter, setFilter] = useState<"todos" | "ingrediente" | "produto">("todos");
+export default function StockPage() {
   const [items, setItems] = useState<StockItem[]>([]);
+  const [types, setTypes] = useState<string[]>([]);
+  const [filter, setFilter] = useState<string>("todos");
+  const [loading, setLoading] = useState<boolean>(false);
 
-   useEffect(() => {
-    setItems([
-      { id: "1", name: "Farinha", type: "ingrediente", quantity: 20 },
-      { id: "2", name: "Molho de tomate", type: "ingrediente", quantity: 15 },
-      { id: "3", name: "Pizza Margherita", type: "produto", quantity: 5 },
-    ]);
+  async function loadData() {
+    setLoading(true);
+    try {
+      const [resItems, resTypes] = await Promise.all([
+        api.get<StockItem[]>("/stock"),
+        api.get<string[]>("/stock/types"),
+      ]);
+      setItems(resItems.data);
+      setTypes(resTypes.data);
+    } catch (err) {
+      console.error("Erro ao carregar estoque:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   const filteredItems = filter === "todos"
@@ -36,7 +48,7 @@ export default function Stockpage() {
     <main className={styles.container}>
       <section className={styles.header}>
         <h1>Estoque</h1>
-        <button onClick={() => window.location.reload()}>
+        <button onClick={loadData} title="Atualizar">
           <RefreshCcw size={24} color="#3fffa3" />
         </button>
       </section>
@@ -48,22 +60,21 @@ export default function Stockpage() {
         >
           Todos
         </button>
-        <button
-          className={filter === "ingrediente" ? styles.activeFilter : ""}
-          onClick={() => setFilter("ingrediente")}
-        >
-          Ingredientes
-        </button>
-        <button
-          className={filter === "produto" ? styles.activeFilter : ""}
-          onClick={() => setFilter("produto")}
-        >
-          Produtos Prontos
-        </button>
+        {types.map(t => (
+          <button
+            key={t}
+            className={filter === t ? styles.activeFilter : ""}
+            onClick={() => setFilter(t)}
+          >
+            {t.charAt(0).toUpperCase() + t.slice(1)}
+          </button>
+        ))}
       </div>
 
       <section className={styles.listOrders}>
-        {filteredItems.length === 0 ? (
+        {loading ? (
+          <span className={styles.emptyItem}>Carregando...</span>
+        ) : filteredItems.length === 0 ? (
           <span className={styles.emptyItem}>Nenhum item encontrado</span>
         ) : (
           filteredItems.map(item => (
@@ -79,7 +90,7 @@ export default function Stockpage() {
                 <span>
                   {item.name}
                   <small style={{ marginLeft: 12 }}>
-                    Qtd: {item.quantity}
+                    {item.quantity} {item.unit}
                   </small>
                 </span>
               </div>
@@ -87,6 +98,12 @@ export default function Stockpage() {
               <button
                 className={styles.chatIcon}
                 title="Adicionar quantidade"
+                onClick={() => {
+                  // aqui você pode exibir um prompt ou modal
+                  const q = prompt("Informe a quantidade a adicionar:");
+                  if (!q) return;
+                  // depois, chamar: api.post(`/stock/${item.id}/addStock`, { quantity: Number(q) })
+                }}
               >
                 ➕
               </button>
