@@ -16,7 +16,7 @@ interface Props {
 }
 
 
-export function Stock({ items }: Props) {
+export default function Stock({ items }: Props) {
   const [filter, setFilter] = useState<"todos" | "ingrediente" | "produto">("todos");
 
   const filteredItems = filter === "todos" ? items : items.filter(item => item.type === filter);
