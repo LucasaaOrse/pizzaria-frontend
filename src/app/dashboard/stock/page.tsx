@@ -1,27 +1,44 @@
+// src/app/dashboard/stock/page.tsx
+ "use client";
 
-import { getCookiesServer } from "@/lib/cookieServer";
-import { redirect }         from "next/navigation";
-import { api }              from "@/services/api";
+import React, { useEffect, useState } from "react";
+import { getCookie } from "cookies-next";
+import { api }       from "@/services/api";
 import StockList, { StockItem } from "./components/StockList";
 
+export default function StockPage() {
+  const [items, setItems] = useState<StockItem[]>([]);
+  const [types, setTypes] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const token = getCookie("session") as string | undefined;
 
-export default async function StockPage() {
-  // 2) pega o cookie HTTP‑only no servidor
-  const token = await getCookiesServer();
-  if (!token) {
-    redirect("/");       // manda pro login se não estiver autenticado
-  }
+  useEffect(() => {
+    if (!token) {
+      // sem token, redireciona pro login
+      window.location.href = "/";
+      return;
+    }
 
-  // 3) faz as duas chamadas protegidas com o token nos headers
-  const [resItems, resTypes] = await Promise.all([
-    api.get<StockItem[]>("/stock",       { headers:{ Authorization:`Bearer ${token}` } }),
-    api.get<string[]>   ("/stock/types", { headers:{ Authorization:`Bearer ${token}` } }),
-  ]);
+    Promise.all([
+      api.get<StockItem[]>("/stock",       { headers: { Authorization: `Bearer ${token}` } }),
+      api.get<string[]>   ("/stock/types", { headers: { Authorization: `Bearer ${token}` } }),
+    ])
+      .then(([rItems, rTypes]) => {
+        setItems(rItems.data);
+        setTypes(rTypes.data);
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Falha ao carregar estoque");
+      })
+      .finally(() => setLoading(false));
+  }, [token]);
 
   return (
     <StockList
-      initialItems={resItems.data}
-      initialTypes={resTypes.data}
+      initialItems={items}
+      initialTypes={types}
+      loading={loading}
     />
   );
 }

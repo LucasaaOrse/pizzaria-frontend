@@ -18,43 +18,48 @@ export interface StockItem {
 interface Props {
   initialItems: StockItem[];
   initialTypes: string[];
+  loading: boolean;
 }
 
-export default function StockList({ initialItems, initialTypes }: Props) {
-  const [items, setItems]   = useState<StockItem[]>(initialItems);
-  const [types] = useState<string[]>(initialTypes);
-  const [filter, setFilter] = useState<string>("todos");
-  const [loading, setLoading] = useState(false);
+export default function StockList({
+  initialItems,
+  initialTypes,
+  loading
+}: Props) {
+  const [items, setItems]     = useState<StockItem[]>(initialItems);
+  const [types]              = useState<string[]>(initialTypes);
+  const [filter, setFilter]  = useState<string>("todos");
 
-  // modal / form
-  const [modalOpen,   setModalOpen]   = useState(false);
-  const [form,        setForm]        = useState({ name:"", type:"", unit:"", quantity:"" });
-  const [submitting,  setSubmitting]  = useState(false);
+  // estado do modal e do form
+  const [modalOpen,  setModalOpen]   = useState(false);
+  const [form,       setForm]        = useState({ name:"", type:"", unit:"", quantity:"" });
+  const [submitting, setSubmitting]  = useState(false);
 
-  // refetch dos dois endpoints
+  // Recarrega itens e tipos
   async function loadData() {
-    setLoading(true);
     try {
-      const [resItems] = await Promise.all([
+      const [rItems, rTypes] = await Promise.all([
         api.get<StockItem[]>("/stock"),
+        api.get<string[]>("/stock/types")
       ]);
-      setItems(resItems.data);
+      setItems(rItems.data);
+      // se quiser atualizar tipos dinamicamente:
+      // setTypes(rTypes.data);
     } catch (err) {
       console.error(err);
       toast.error("Falha ao carregar estoque");
-    } finally {
-      setLoading(false);
     }
   }
 
-  const filtered = filter === "todos"
+  const filteredItems = filter === "todos"
     ? items
     : items.filter(i => i.type === filter);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>
   ) {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -68,13 +73,14 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         name: form.name,
         type: form.type,
         unit: form.unit,
-        quantity: Number(form.quantity)
+        quantity: Number(form.quantity),
       });
       toast.success("Item adicionado ao estoque");
       setModalOpen(false);
       setForm({ name:"", type:"", unit:"", quantity:"" });
       await loadData();
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Erro ao adicionar item");
     } finally {
       setSubmitting(false);
@@ -99,56 +105,59 @@ export default function StockList({ initialItems, initialTypes }: Props) {
       {/* Filtros */}
       <div className={styles.filters}>
         <button
-          className={filter==="todos"?styles.activeFilter:""}
+          className={filter==="todos" ? styles.activeFilter : ""}
           onClick={()=>setFilter("todos")}
         >
           Todos
         </button>
-        {types.map(t=>(
+        {types.map(t => (
           <button
             key={t}
-            className={filter===t?styles.activeFilter:""}
+            className={filter===t ? styles.activeFilter : ""}
             onClick={()=>setFilter(t)}
           >
-            {t[0].toUpperCase()+t.slice(1)}
+            {t[0].toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
 
       {/* Lista */}
       <section className={styles.listOrders}>
-        {loading
-          ? <span className={styles.emptyItem}>Carregando…</span>
-          : filtered.length===0
-            ? <span className={styles.emptyItem}>Nenhum item encontrado</span>
-            : filtered.map(item=>(
-                <div key={item.id} className={styles.orderRow}>
-                  <div className={styles.orderItem}>
-                    <div
-                      className={styles.tag}
-                      style={{
-                        backgroundColor: item.type==="ingrediente"
-                          ? "#f1c40f"
-                          : "#3fffa3"
-                      }}
-                    />
-                    <span>
-                      {item.name}
-                      <small style={{ marginLeft:12 }}>
-                        {item.quantity} {item.unit}
-                      </small>
-                    </span>
-                  </div>
-                  <button
-                    className={styles.chatIcon}
-                    title="Adicionar quantidade"
-                    onClick={()=>{/* futuramente abrir modal de edição */}}
-                  >
-                    ➕
-                  </button>
-                </div>
-              ))
-        }
+        {loading ? (
+          <span className={styles.emptyItem}>Carregando…</span>
+        ) : filteredItems.length === 0 ? (
+          <span className={styles.emptyItem}>Nenhum item encontrado</span>
+        ) : (
+          filteredItems.map(item => (
+            <div key={item.id} className={styles.orderRow}>
+              <div className={styles.orderItem}>
+                <div
+                  className={styles.tag}
+                  style={{
+                    backgroundColor: item.type === "ingrediente"
+                      ? "#f1c40f"
+                      : "#3fffa3"
+                  }}
+                />
+                <span>
+                  {item.name}
+                  <small style={{ marginLeft:12 }}>
+                    {item.quantity} {item.unit}
+                  </small>
+                </span>
+              </div>
+              <button
+                className={styles.chatIcon}
+                title="Adicionar quantidade"
+                onClick={() => {
+                  /* futuramente abrir modal de edição */
+                }}
+              >
+                ➕
+              </button>
+            </div>
+          ))
+        )}
       </section>
 
       {/* Modal de criação */}
@@ -163,22 +172,34 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         <form onSubmit={handleCreate} className={styles.form}>
           <label>
             Nome
-            <input name="name"  value={form.name}  onChange={handleChange} />
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+            />
           </label>
           <label>
             Tipo
-            <select name="type" value={form.type} onChange={handleChange}>
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+            >
               <option value="">Selecione</option>
-              {types.map(t=>(
+              {types.map(t => (
                 <option key={t} value={t}>
-                  {t[0].toUpperCase()+t.slice(1)}
+                  {t[0].toUpperCase() + t.slice(1)}
                 </option>
               ))}
             </select>
           </label>
           <label>
             Unidade
-            <input name="unit"  value={form.unit}  onChange={handleChange} />
+            <input
+              name="unit"
+              value={form.unit}
+              onChange={handleChange}
+            />
           </label>
           <label>
             Quantidade
