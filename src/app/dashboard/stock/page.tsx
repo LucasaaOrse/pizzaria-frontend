@@ -1,44 +1,34 @@
 // src/app/dashboard/stock/page.tsx
- "use client";
-
-import React, { useEffect, useState } from "react";
-import { getCookie } from "cookies-next";
-import { api }       from "@/services/api";
+import { getCookiesServer } from "@/lib/cookieServer";
+import { redirect } from "next/navigation";
+import { api } from "@/services/api";
 import StockList, { StockItem } from "./components/StockList";
 
-export default function StockPage() {
-  const [items, setItems] = useState<StockItem[]>([]);
-  const [types, setTypes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const token = getCookie("session") as string | undefined;
+export const dynamic = "force-dynamic";
 
-  useEffect(() => {
-    if (!token) {
-      // sem token, redireciona pro login
-      window.location.href = "/";
-      return;
-    }
+export default async function StockPage() {
+  // 1) pega token httpOnly
 
-    Promise.all([
-      api.get<StockItem[]>("/stock",       { headers: { Authorization: `Bearer ${token}` } }),
-      api.get<string[]>   ("/stock/types", { headers: { Authorization: `Bearer ${token}` } }),
-    ])
-      .then(([rItems, rTypes]) => {
-        setItems(rItems.data);
-        setTypes(rTypes.data);
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Falha ao carregar estoque");
-      })
-      .finally(() => setLoading(false));
-  }, [token]);
+  const token = await getCookiesServer()
+  if (!token) {
+    // se não tiver, manda pro login
+    redirect("/");
+  }
+
+  // 2) busca os dados protegidos
+  const [resItems, resTypes] = await Promise.all([
+    api.get<StockItem[]>("/stock", {
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+    api.get<string[]>("/stock/types", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+  ]);
 
   return (
     <StockList
-      initialItems={items}
-      initialTypes={types}
-      loading={loading}
+      initialItems={resItems.data}
+      initialTypes={resTypes.data}
     />
   );
 }
