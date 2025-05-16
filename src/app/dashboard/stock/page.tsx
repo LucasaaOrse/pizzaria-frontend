@@ -1,13 +1,13 @@
 // src/app/dashboard/stock/page.tsx
+import { getCookiesServer } from "@/lib/cookieServer";
 import { redirect } from "next/navigation";
 import { api } from "@/services/api";
 import StockList, { StockItem } from "./components/StockList";
-import { getCookiesServer } from "@/lib/cookieServer";
 
 export default async function StockPage() {
   // 1) pega token httpOnly
 
-  const token =  getCookiesServer()
+  const token = await getCookiesServer()
   if (!token) {
     // se não tiver, manda pro login
     redirect("/");
