@@ -1,72 +1,57 @@
-// app/(auth)/page.tsx  (ou src/app/page.tsx)
-import styles from "./page.module.scss";
-import logoImg from "/public/logo.svg";
-import Image from "next/image";
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
 import { api } from "@/services/api";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import styles from "./page.module.scss";
+import Image from "next/image";
+import logoImg from "/public/logo.svg";
 
-export default function Home() {
-  // Server Action
-  async function handleLogin(formData: FormData) {
-    "use server";
+export default function LoginPage() {
+  const router = useRouter();
 
-    // Converte em string e trim
-    const email = formData.get("email")?.toString().trim();
-    const password = formData.get("password")?.toString().trim();
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const form = new FormData(e.currentTarget);
+    const email = form.get("email")?.toString().trim();
+    const password = form.get("password")?.toString().trim();
     if (!email || !password) return;
 
     try {
-      // ESTA CHAMADA AGORA USA process.env.API_URL no servidor
-      const response = await api.post("/login", { email, password });
-
-      const token = response.data.token;
-      if (!token) return;
-
-      const maxAge = 60 * 60 * 24 * 30; // 30 dias
-      const cookieStore = await cookies();
-      cookieStore.set("session", token, {
-        maxAge,
-        path: "/",
-        httpOnly: false,                       // mais seguro
-        secure: process.env.NODE_ENV === "production",
-      });
-    } catch (err) {
-      console.error("Erro no login:", err);
-      return;
+      // Faz POST /login e backend seta cookie
+      await api.post(
+        "/login",
+        { email, password },
+        { withCredentials: true } // garante envio/recebimento de cookie
+      );
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error("Falha no login:", err);
+      alert(err.response?.data?.error || "Erro ao fazer login");
     }
-
-    // redireciona para dashboard
-    redirect("/dashboard");
   }
 
   return (
-    <div className={styles.contaninerCenter}>
+    <div className={styles.containerCenter}>
       <Image src={logoImg} alt="Logo" />
       <section className={styles.login}>
-        {/* action invoca a Server Action */}
-        <form action={handleLogin}>
+        <form onSubmit={handleSubmit}>
           <input
-            type="email"
             name="email"
-            placeholder="Digite o seu email"
+            type="email"
+            placeholder="Seu email"
             className={styles.input}
             required
           />
           <input
-            type="password"
             name="password"
-            placeholder="**********"
+            type="password"
+            placeholder="Sua senha"
             className={styles.input}
             required
           />
           <button type="submit">Acessar</button>
         </form>
-
-        <Link href="/signup" className={styles.text}>
-          Não possui conta? Cadastre-se
-        </Link>
       </section>
     </div>
   );
