@@ -1,57 +1,65 @@
+// app/(auth)/page.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
-import { api } from "@/services/api";
 import styles from "./page.module.scss";
-import Image from "next/image";
 import logoImg from "/public/logo.svg";
+import Image from "next/image";
+import Link from "next/link";
+import { api } from "@/services/api";
+import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+export default function Home() {
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const form = new FormData(e.currentTarget);
-    const email = form.get("email")?.toString().trim();
-    const password = form.get("password")?.toString().trim();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email")?.toString().trim();
+    const password = formData.get("password")?.toString().trim();
     if (!email || !password) return;
 
     try {
-      // Faz POST /login e backend seta cookie
+      // Chama o backend que agora seta o cookie 'session'
       await api.post(
         "/login",
         { email, password },
-        { withCredentials: true } // garante envio/recebimento de cookie
+        { withCredentials: true }
       );
+      // Se não lançou erro, o cookie foi gravado e podemos redirecionar
       router.push("/dashboard");
     } catch (err: any) {
-      console.error("Falha no login:", err);
-      alert(err.response?.data?.error || "Erro ao fazer login");
+      console.error("Erro no login:", err);
+      alert(err.response?.data?.error || "Falha ao fazer login");
     }
   }
 
   return (
-    <div className={styles.containerCenter}>
+    <div className={styles.contaninerCenter}>
       <Image src={logoImg} alt="Logo" />
+
       <section className={styles.login}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <input
-            name="email"
             type="email"
-            placeholder="Seu email"
+            name="email"
+            placeholder="Digite o seu email"
             className={styles.input}
             required
           />
           <input
-            name="password"
             type="password"
-            placeholder="Sua senha"
+            name="password"
+            placeholder="**********"
             className={styles.input}
             required
           />
           <button type="submit">Acessar</button>
         </form>
+
+        <Link href="/signup" className={styles.text}>
+          Não possui conta? Cadastre-se
+        </Link>
       </section>
     </div>
   );
