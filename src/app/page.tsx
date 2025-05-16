@@ -1,45 +1,43 @@
-// app/(auth)/page.tsx
-"use client";
-
+// app/(auth)/page.tsx  (ou src/app/page.tsx)
 import styles from "./page.module.scss";
 import logoImg from "/public/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/services/api";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 export default function Home() {
-  const router = useRouter();
+  // Server Action
+  async function handleLogin(formData: FormData) {
+    "use server";
 
-  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
+    // Converte em string e trim
     const email = formData.get("email")?.toString().trim();
     const password = formData.get("password")?.toString().trim();
     if (!email || !password) return;
 
     try {
-      // Chama o backend que agora seta o cookie 'session'
+      // Faz POST /login e backend seta cookie
       await api.post(
         "/login",
         { email, password },
-        { withCredentials: true }
+        { withCredentials: true } // garante envio/recebimento de cookie
       );
-      // Se não lançou erro, o cookie foi gravado e podemos redirecionar
-      router.push("/dashboard");
+      
+      redirect('/dashboard')
     } catch (err: any) {
-      console.error("Erro no login:", err);
-      alert(err.response?.data?.error || "Falha ao fazer login");
+      console.error("Falha no login:", err);
+      alert(err.response?.data?.error || "Erro ao fazer login");
     }
   }
 
   return (
     <div className={styles.contaninerCenter}>
       <Image src={logoImg} alt="Logo" />
-
       <section className={styles.login}>
-        <form onSubmit={handleLogin}>
+        {/* action invoca a Server Action */}
+        <form action={handleLogin}>
           <input
             type="email"
             name="email"
