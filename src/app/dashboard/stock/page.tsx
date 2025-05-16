@@ -1,30 +1,25 @@
 // src/app/dashboard/stock/page.tsx
 
-export const dynamic = 'force-dynamic';
-
-import { getCookiesServer } from "@/lib/cookieServer";
-import { redirect } from "next/navigation";
+import { getCookiesServer } from "@/lib/cookieServer"
 import { api } from "@/services/api";
 import StockList, { StockItem } from "./components/StockList";
 
 export default async function StockPage() {
   // 1) pega token httpOnly
 
-  const token = await getCookiesServer()
-
-  console.log(token)
-  if (!token) {
-    // se não tiver, manda pro login
-    redirect("/");
-  }
+   const token = await getCookiesServer()
 
   // 2) busca os dados protegidos
   const [resItems, resTypes] = await Promise.all([
     api.get<StockItem[]>("/stock", {
-      headers: { Authorization: `Bearer ${token}` }
+      headers:{
+                Authorization: `Bearer ${token}`
+            }
     }),
     api.get<string[]>("/stock/types", {
-      headers: { Authorization: `Bearer ${token}` }
+      headers:{
+                Authorization: `Bearer ${token}`
+            }
     })
   ]);
 
