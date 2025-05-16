@@ -38,6 +38,9 @@ export function Header(){
                     <Link href="/dashboard/product">
                         Produto
                     </Link>
+                    <Link href="/dashboard/stock">
+                        Estoque
+                    </Link>
 
                     <form action={handleLogout}>
                         <button type="submit">
