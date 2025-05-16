@@ -8,6 +8,8 @@ export default async function StockPage() {
   // 1) pega token httpOnly
 
   const token = await getCookiesServer()
+
+  console.log(token)
   if (!token) {
     // se não tiver, manda pro login
     redirect("/");
