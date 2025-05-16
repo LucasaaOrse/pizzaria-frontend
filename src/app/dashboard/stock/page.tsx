@@ -1,4 +1,7 @@
 // src/app/dashboard/stock/page.tsx
+
+export const dynamic = 'force-dynamic';
+
 import { getCookiesServer } from "@/lib/cookieServer";
 import { redirect } from "next/navigation";
 import { api } from "@/services/api";
