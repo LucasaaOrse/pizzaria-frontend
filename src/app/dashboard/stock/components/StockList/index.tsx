@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ReactModal from "react-modal";
-import styles from "./styles.module.scss";
+import styles from "../../styles.module.scss";
 import { RefreshCcw, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/services/api";
