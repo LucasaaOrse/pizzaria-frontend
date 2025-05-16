@@ -2,12 +2,12 @@
 import { redirect } from "next/navigation";
 import { api } from "@/services/api";
 import StockList, { StockItem } from "./components/StockList";
-import { getCookies } from "cookies-next/server";
+import { getCookiesServer } from "@/lib/cookieServer";
 
 export default async function StockPage() {
   // 1) pega token httpOnly
 
-  const token =  getCookies()
+  const token =  getCookiesServer()
   if (!token) {
     // se não tiver, manda pro login
     redirect("/");
