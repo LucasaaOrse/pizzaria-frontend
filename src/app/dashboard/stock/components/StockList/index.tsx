@@ -24,15 +24,20 @@ export interface StockItem {
   quantity: number;
 }
 
+export interface StockItemType {
+  id: string;
+  name: string;
+}
+
 interface Props {
   initialItems: StockItem[];
-  initialTypes: string[];
+  initialTypes: StockItemType[];
 }
 
 export default function StockList({ initialItems, initialTypes }: Props) {
   // Lista e filtros
   const [items, setItems]       = useState<StockItem[]>(initialItems);
-  const [types]                = useState<string[]>(initialTypes);
+  const [types] = useState<StockItemType[]>(initialTypes);
   const [filter, setFilter]    = useState<string>("todos");
   const [loading, setLoading]  = useState(false);
 
@@ -68,8 +73,8 @@ export default function StockList({ initialItems, initialTypes }: Props) {
 
   // Filtra por tipo
   const filtered = filter === "todos"
-    ? items
-    : items.filter(i => i.type === filter);
+  ? items
+  : items.filter(i => i.type === filter);
 
   // Handle criação de item novo
   function handleChange(
@@ -127,11 +132,11 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         </button>
         {types.map(t => (
           <button
-            key={t}
-            className={filter===t ? styles.activeFilter : ""}
-            onClick={()=>setFilter(t)}
+            key={t.id}
+            className={filter === t.name ? styles.activeFilter : ""}
+            onClick={() => setFilter(t.name)}
           >
-            {t[0].toUpperCase() + t.slice(1)}
+            {t.name[0].toUpperCase() + t.name.slice(1)}
           </button>
         ))}
       </div>
@@ -209,9 +214,9 @@ export default function StockList({ initialItems, initialTypes }: Props) {
             Tipo
             <select name="type" value={form.type} onChange={handleChange}>
               <option value="">Selecione</option>
-              {types.map(t=>(
-                <option key={t} value={t}>
-                  {t[0].toUpperCase() + t.slice(1)}
+              {types.map(t => (
+                <option key={t.id} value={t.name}>
+                  {t.name[0].toUpperCase() + t.name.slice(1)}
                 </option>
               ))}
             </select>
@@ -264,7 +269,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
       {editItem   && (
         <EditItemModal
           item={editItem}
-          types={types}
+          types={types.map(t => t.name)}
           onClose={() => setEditItem(null)}
           onSuccess={loadData}
         />

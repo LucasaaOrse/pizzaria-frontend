@@ -6,6 +6,8 @@ import StockList, { StockItem } from "./components/StockList";
 
 export const dynamic = "force-dynamic";
 
+type StockItemType = { id: string; name: string };
+
 export default async function StockPage() {
   // 1) pega token httpOnly
 
@@ -20,7 +22,7 @@ export default async function StockPage() {
     api.get<StockItem[]>("/stock", {
       headers: { Authorization: `Bearer ${token}` }
     }),
-    api.get<string[]>("/stock/types", {
+    api.get<StockItemType[]>("/stock/types", {
       headers: { Authorization: `Bearer ${token}` }
     })
   ]);
