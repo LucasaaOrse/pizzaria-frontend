@@ -3,9 +3,18 @@
 import React, { useState } from "react";
 import ReactModal from "react-modal";
 import styles from "../../styles.module.scss";
-import { RefreshCcw, Plus } from "lucide-react";
+import { RefreshCcw, } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/services/api";
+
+
+
+import AddQuantityModal    from "../AddQuantityModal";
+import RemoveQuantityModal from "../RemoveQuantityModal";
+import EditItemModal       from "../EditItemModal";
+import ConfirmDeleteModal  from "../ConfirmDeleteModal";
+
+import { Plus, Minus, Edit3, Trash2 } from "lucide-react";
 
 export interface StockItem {
   id: string;
@@ -21,24 +30,34 @@ interface Props {
 }
 
 export default function StockList({ initialItems, initialTypes }: Props) {
-  const [items, setItems]   = useState<StockItem[]>(initialItems);
-  const [types] = useState<string[]>(initialTypes);
-  const [filter, setFilter] = useState<string>("todos");
-  const [loading, setLoading] = useState(false);
+  // Lista e filtros
+  const [items, setItems]       = useState<StockItem[]>(initialItems);
+  const [types]                = useState<string[]>(initialTypes);
+  const [filter, setFilter]    = useState<string>("todos");
+  const [loading, setLoading]  = useState(false);
 
-  // modal / form
-  const [modalOpen,   setModalOpen]   = useState(false);
-  const [form,        setForm]        = useState({ name:"", type:"", unit:"", quantity:"" });
-  const [submitting,  setSubmitting]  = useState(false);
+  // Estado do modal de criação de item
+  const [createOpen, setCreateOpen] = useState(false);
+  const [form, setForm]             = useState({
+    name: "",
+    type: "",
+    unit: "",
+    quantity: ""
+  });
+  const [submitting, setSubmitting] = useState(false);
 
-  // refetch dos dois endpoints
+  // Estados para cada modal de ação
+  const [addItem,    setAddItem]    = useState<StockItem | null>(null);
+  const [removeItem, setRemoveItem] = useState<StockItem | null>(null);
+  const [editItem,   setEditItem]   = useState<StockItem | null>(null);
+  const [delItem,    setDelItem]    = useState<StockItem | null>(null);
+
+  // Refetch
   async function loadData() {
     setLoading(true);
     try {
-      const [resItems] = await Promise.all([
-        api.get<StockItem[]>("/stock"),
-      ]);
-      setItems(resItems.data);
+      const res = await api.get<StockItem[]>("/stock");
+      setItems(res.data);
     } catch (err) {
       console.error(err);
       toast.error("Falha ao carregar estoque");
@@ -47,10 +66,12 @@ export default function StockList({ initialItems, initialTypes }: Props) {
     }
   }
 
+  // Filtra por tipo
   const filtered = filter === "todos"
     ? items
     : items.filter(i => i.type === filter);
 
+  // Handle criação de item novo
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>
   ) {
@@ -71,7 +92,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         quantity: Number(form.quantity)
       });
       toast.success("Item adicionado ao estoque");
-      setModalOpen(false);
+      setCreateOpen(false);
       setForm({ name:"", type:"", unit:"", quantity:"" });
       await loadData();
     } catch {
@@ -90,7 +111,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
           <button onClick={loadData} title="Atualizar">
             <RefreshCcw size={24} color="#3fffa3" />
           </button>
-          <button onClick={() => setModalOpen(true)} title="Adicionar">
+          <button onClick={() => setCreateOpen(true)} title="Adicionar item">
             <Plus size={24} color="#3fffa3" />
           </button>
         </div>
@@ -99,18 +120,18 @@ export default function StockList({ initialItems, initialTypes }: Props) {
       {/* Filtros */}
       <div className={styles.filters}>
         <button
-          className={filter==="todos"?styles.activeFilter:""}
+          className={filter==="todos" ? styles.activeFilter : ""}
           onClick={()=>setFilter("todos")}
         >
           Todos
         </button>
-        {types.map(t=>(
+        {types.map(t => (
           <button
             key={t}
-            className={filter===t?styles.activeFilter:""}
+            className={filter===t ? styles.activeFilter : ""}
             onClick={()=>setFilter(t)}
           >
-            {t[0].toUpperCase()+t.slice(1)}
+            {t[0].toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
@@ -119,42 +140,61 @@ export default function StockList({ initialItems, initialTypes }: Props) {
       <section className={styles.listOrders}>
         {loading
           ? <span className={styles.emptyItem}>Carregando…</span>
-          : filtered.length===0
+          : filtered.length === 0
             ? <span className={styles.emptyItem}>Nenhum item encontrado</span>
-            : filtered.map(item=>(
+            : filtered.map(item => (
                 <div key={item.id} className={styles.orderRow}>
                   <div className={styles.orderItem}>
                     <div
                       className={styles.tag}
                       style={{
-                        backgroundColor: item.type==="ingrediente"
-                          ? "#f1c40f"
-                          : "#3fffa3"
+                        backgroundColor:
+                          item.type === "ingrediente" ? "#f1c40f" : "#3fffa3"
                       }}
                     />
                     <span>
                       {item.name}
-                      <small style={{ marginLeft:12 }}>
+                      <small style={{ marginLeft: 12 }}>
                         {item.quantity} {item.unit}
                       </small>
                     </span>
                   </div>
-                  <button
-                    className={styles.chatIcon}
-                    title="Adicionar quantidade"
-                    onClick={()=>{/* futuramente abrir modal de edição */}}
-                  >
-                    ➕
-                  </button>
+                  <div className={styles.rowActions}>
+                    {/* Abre cada modal passando o item */}
+                    <button
+                      title="Adicionar quantidade"
+                      onClick={() => setAddItem(item)}
+                    >
+                      <Plus size={20} />
+                    </button>
+                    <button
+                      title="Remover quantidade"
+                      onClick={() => setRemoveItem(item)}
+                    >
+                      <Minus size={20} />
+                    </button>
+                    <button
+                      title="Editar item"
+                      onClick={() => setEditItem(item)}
+                    >
+                      <Edit3 size={20} />
+                    </button>
+                    <button
+                      title="Deletar item"
+                      onClick={() => setDelItem(item)}
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
                 </div>
               ))
         }
       </section>
 
-      {/* Modal de criação */}
+      {/* Modal de criar novo item */}
       <ReactModal
-        isOpen={modalOpen}
-        onRequestClose={()=>setModalOpen(false)}
+        isOpen={createOpen}
+        onRequestClose={() => setCreateOpen(false)}
         ariaHideApp={false}
         className={styles.modal}
         overlayClassName={styles.overlay}
@@ -171,14 +211,14 @@ export default function StockList({ initialItems, initialTypes }: Props) {
               <option value="">Selecione</option>
               {types.map(t=>(
                 <option key={t} value={t}>
-                  {t[0].toUpperCase()+t.slice(1)}
+                  {t[0].toUpperCase() + t.slice(1)}
                 </option>
               ))}
             </select>
           </label>
           <label>
             Unidade
-            <input name="unit"  value={form.unit}  onChange={handleChange} />
+            <input name="unit" value={form.unit} onChange={handleChange} />
           </label>
           <label>
             Quantidade
@@ -194,7 +234,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
           <footer className={styles.formFooter}>
             <button
               type="button"
-              onClick={()=>setModalOpen(false)}
+              onClick={()=>setCreateOpen(false)}
               disabled={submitting}
             >
               Cancelar
@@ -205,6 +245,40 @@ export default function StockList({ initialItems, initialTypes }: Props) {
           </footer>
         </form>
       </ReactModal>
+
+      {/* Modais de ação */}
+      {addItem    && (
+        <AddQuantityModal
+          item={addItem}
+          onClose={() => setAddItem(null)}
+          onSuccess={loadData}
+        />
+      )}
+      {removeItem && (
+        <RemoveQuantityModal
+          item={removeItem}
+          onClose={() => setRemoveItem(null)}
+          onSuccess={loadData}
+        />
+      )}
+      {editItem   && (
+        <EditItemModal
+          item={editItem}
+          types={types}
+          onClose={() => setEditItem(null)}
+          onSuccess={loadData}
+        />
+      )}
+      {delItem    && (
+        <ConfirmDeleteModal
+          item={delItem}
+          onClose={() => setDelItem(null)}
+          onSuccess={loadData}
+        />
+      )}
+
+      
+
     </main>
   );
 }
