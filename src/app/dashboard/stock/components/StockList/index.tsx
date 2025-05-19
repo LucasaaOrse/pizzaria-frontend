@@ -118,10 +118,9 @@ export default function StockList({ initialItems, initialTypes }: Props) {
     }
   }
 
-  // Filtra por tipo
-  const filtered = filter === "Todos"
+ const filtered = filter === "todos"
   ? items
-  : items.filter(i => GROUPS[filter].includes(i.type_name));
+  : items.filter(i => (GROUPS[filter] || []).includes(i.type_name));
 
   // Criação de item novo
   function handleChange(
