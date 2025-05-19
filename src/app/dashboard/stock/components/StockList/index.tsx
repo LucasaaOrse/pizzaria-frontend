@@ -129,7 +129,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
     try {
       await api.post("/stock", {
         name: form.name,
-        type: form.type,
+        type_id: form.type,
         unit: form.unit,
         quantity: Number(form.quantity)
       }, {
