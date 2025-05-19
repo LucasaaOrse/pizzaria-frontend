@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/services/api";
-import styles from "./page.module.scss";
+import styles from "../../../page.module.scss";
 import Image from "next/image";
 import logoImg from "/public/logo.svg";
 import Link from "next/link";
