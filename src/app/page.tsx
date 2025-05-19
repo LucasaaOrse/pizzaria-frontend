@@ -17,20 +17,16 @@ export default function Home() {
     if (!email || !password) return;
 
     try {
-      // Faz POST /login e backend seta cookie
-      await api.post(
-        "/login",
-        { email, password },
-        { withCredentials: true } // garante envio/recebimento de cookie
-      );
-      
-      
-    } catch (err: any) {
-      console.error("Falha no login:", err);
-      return
+      // ESTA CHAMADA AGORA USA process.env.API_URL no servidor
+      await api.post("/login", { email, password });
+
+    } catch (err) {
+      console.error("Erro no login:", err);
+      return;
     }
 
-    redirect('/dashboard')
+    // redireciona para dashboard
+    redirect("/dashboard");
   }
 
   return (
