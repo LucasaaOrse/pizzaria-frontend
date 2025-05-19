@@ -22,7 +22,7 @@ export interface StockItem {
   quantity: number;
   type_id: number;
   type_name: string;
-  minimum?: number; // novo campo
+  minimum_quantity?: number; // novo campo
 }
 
 export interface StockItemType {
@@ -82,6 +82,15 @@ export default function StockList({ initialItems, initialTypes }: Props) {
     })
   );
 }
+  function getQuantityColor(item: StockItem) {
+  const quantity = Number(item.quantity);
+  const minimum = Number(item.minimum_quantity || 0);
+  if (quantity === 0) return "gray";
+  if (quantity < minimum) return "red";
+  if (quantity === minimum) return "orange";
+  return "green";
+}
+
   function removeQuantityLocally(id: string, delta: number) {
   setItems(old =>
     old.map(i => {
@@ -194,54 +203,83 @@ export default function StockList({ initialItems, initialTypes }: Props) {
           : filtered.length === 0
             ? <span className={styles.emptyItem}>Nenhum item encontrado</span>
             : filtered.map(item => (
-                <div key={item.id} className={styles.orderRow}>
-                  <div className={styles.orderItem}>
-                    <div
-                      className={styles.tag}
-                      style={{
-                        backgroundColor:
-                          item.type_name === "ingrediente" ? "#f1c40f" : "#3fffa3"
-                      }}
-                    />
-                    <span>
-                      {item.name}
-                      <small style={{ marginLeft: 12 }}>
-                        {isUnitInteger(item.unit)
-                          ? `${Math.round(item.quantity)} ${item.unit}`
-                          : `${Number(item.quantity).toFixed(2)} ${item.unit}`
-                        }
-                      </small>
-                    </span>
-                  </div>
-                  <div className={styles.rowActions}>
-                    <button
-                      title="Adicionar quantidade"
-                      onClick={() => setAddItem(item)}
-                    >
-                      <Plus size={20} />
-                    </button>
-                    <button
-                      title="Remover quantidade"
-                      onClick={() => setRemoveItem(item)}
-                    >
-                      <Minus size={20} />
-                    </button>
-                    <button
-                      title="Editar item"
-                      onClick={() => setEditItem(item)}
-                    >
-                      <Edit3 size={20} />
-                    </button>
-                    <button
-                      title="Deletar item"
-                      onClick={() => setDelItem(item)}
-                    >
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                </div>
-              ))
-        }
+<div key={item.id} className={styles.orderRow}>
+    <div className={styles.orderItem}>
+      <div className={styles.tag} style={{ backgroundColor: getQuantityColor(item) }} />
+      <span>
+        {item.name}
+        <small
+          style={{
+            marginLeft: 12,
+            fontWeight: "bold",
+            color: Number(item.quantity) === 0 ? "red" : "gray"
+          }}
+        >
+          {item.quantity} {item.unit}
+        </small>
+      </span>
+    </div>
+    <div className={styles.rowActions}>
+      <button title="Adicionar quantidade" onClick={() => setAddItem(item)}>
+        <Plus size={20} />
+      </button>
+      <button title="Editar item" onClick={() => setEditItem(item)}>
+        <Edit3 size={20} />
+      </button>
+      <button title="Deletar item" onClick={() => setDelItem(item)}>
+        <Trash2 size={20} />
+      </button>
+    </div>
+  </div>
+))}
+
+{/* BLOCO DOS ITENS FORA DE ESTOQUE */}
+{filtered.some(i => Number(i.quantity) === 0) && (
+  <>
+    <h3 style={{ marginTop: "2rem", color: "red" }}>Itens fora de estoque:</h3>
+    {filtered
+      .filter(i => Number(i.quantity) === 0)
+      .map(item => (
+        <div key={item.id} className={styles.orderRow}>
+          <div className={styles.orderItem}>
+            <div className={styles.tag} style={{ backgroundColor: "#ccc" }} />
+            <span>
+              {item.name}
+              <small
+                style={{
+                  marginLeft: 12,
+                  fontWeight: "bold",
+                  color: "gray"
+                }}
+              >
+                0 {item.unit}
+              </small>
+            </span>
+          </div>
+          <div className={styles.rowActions}>
+            <button
+              title="Adicionar quantidade"
+              onClick={() => setAddItem(item)}
+            >
+              <Plus size={20} />
+            </button>
+            <button
+              title="Editar item"
+              onClick={() => setEditItem(item)}
+            >
+              <Edit3 size={20} />
+            </button>
+            <button
+              title="Deletar item"
+              onClick={() => setDelItem(item)}
+            >
+              <Trash2 size={20} />
+            </button>
+          </div>
+        </div>
+      ))}
+  </>
+)}
       </section>
 
       {/* Modal de criar novo item */}

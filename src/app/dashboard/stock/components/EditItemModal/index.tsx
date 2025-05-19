@@ -29,7 +29,7 @@ export default function EditItemModal({
     name:   item.name,
     unit:   item.unit,
     typeId: String(item.type_id),  // pode vir string ou number
-    minimum: item.minimum?.toString() ?? ""
+    minimum: item.minimum_quantity?.toString() ?? ""
   });
   const [saving, setSaving] = useState(false);
   const token = getCookieClient();
@@ -53,7 +53,7 @@ export default function EditItemModal({
       name:    form.name,
       unit:    form.unit,
       type_id: typeIdNum,
-      minimum_quantity: item.minimum?.toString() ?? ""
+      minimum_quantity: item.minimum_quantity?.toString() ?? ""
     };
 
     // otimização local: converta t.id para number
@@ -65,7 +65,7 @@ export default function EditItemModal({
       type_id:   typeIdNum,
       type_name: typeName,
       quantity:  item.quantity,
-      minimum:   Number(form.minimum) || 0
+      minimum_quantity:   Number(form.minimum) || 0
     });
 
     try {
