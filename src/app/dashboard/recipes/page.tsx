@@ -25,11 +25,10 @@ export default async function RecipeManager() {
   const [products, setProducts] = useState<RecipeProduct[]>([]);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
-  const token = await getCookieClient()
-
   useEffect(() => {
     async function load() {
       try {
+        const token = await getCookieClient()
         const res = await api.get<RecipeProduct[]>("/product/all-with-recipes", {
             headers:{
                 Authorization: `Bearer ${token}`
