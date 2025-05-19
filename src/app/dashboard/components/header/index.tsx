@@ -41,6 +41,9 @@ export function Header(){
                     <Link href="/dashboard/stock">
                         Estoque
                     </Link>
+                    <Link href="/dashboard/recipes">
+                        Estoque
+                    </Link>
 
                     <form action={handleLogout}>
                         <button type="submit">

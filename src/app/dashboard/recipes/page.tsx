@@ -27,7 +27,7 @@ export default function RecipeManager() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await api.get<RecipeProduct[]>("/products/all-with-recipes");
+        const res = await api.get<RecipeProduct[]>("/product/all-with-recipes");
         setProducts(res.data);
       } catch (err) {
         console.error(err);
