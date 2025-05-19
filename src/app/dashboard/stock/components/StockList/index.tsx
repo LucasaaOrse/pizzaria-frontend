@@ -34,6 +34,13 @@ interface Props {
   initialTypes: StockItemType[];
 }
 
+const GROUPS: Record<string, string[]> = {
+  Todos: [],  
+  Ingredientes: ["ingrediente"],  
+  Bebidas: ["bebida alcoólica", "refrigerante", "suco", "água"],  
+  Outros: ["material de limpeza", "embalagem", "outro"],  
+};
+
 export default function StockList({ initialItems, initialTypes }: Props) {
   // Lista e filtros
   const [items, setItems]       = useState<StockItem[]>(initialItems);
@@ -112,9 +119,9 @@ export default function StockList({ initialItems, initialTypes }: Props) {
   }
 
   // Filtra por tipo
-  const filtered = filter === "todos"
-    ? items
-    : items.filter(i => i.type_name === filter);
+  const filtered = filter === "Todos"
+  ? items
+  : items.filter(i => GROUPS[filter].includes(i.type_name));
 
   // Criação de item novo
   function handleChange(
@@ -165,24 +172,18 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         </div>
       </section>
 
-      {/* Filtros */}
-      <div className={styles.filters}>
-        <button
-          className={filter==="todos" ? styles.activeFilter : ""}
-          onClick={()=>setFilter("todos")}
-        >
-          Todos
-        </button>
-        {types.map(t => (
-          <button
-            key={t.id}
-            className={filter === t.name ? styles.activeFilter : ""}
-            onClick={() => setFilter(t.name)}
-          >
-            {t.name[0].toUpperCase() + t.name.slice(1)}
-          </button>
-        ))}
-      </div>
+      {/* Filtros agrupados */}
+        <div className={styles.filters}>
+          {Object.keys(GROUPS).map(group => (
+            <button
+              key={group}
+              className={filter === group ? styles.activeFilter : ""}
+              onClick={() => setFilter(group)}
+            >
+              {group}
+            </button>
+          ))}
+        </div>
 
       {/* Lista */}
       <section className={styles.listOrders}>
