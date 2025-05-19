@@ -155,7 +155,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
       {/* Header */}
       <section className={styles.header}>
         <h1>Estoque</h1>
-        <div>
+        <div className={styles.headerButtons}>
           <button onClick={loadData} title="Atualizar">
             <RefreshCcw size={24} color="#3fffa3" />
           </button>

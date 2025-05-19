@@ -27,6 +27,11 @@
   }
 }
 
+.headerButtons {
+  display: flex;
+  gap: 8px; // ou 12px, se preferir mais espaço
+}
+
 .filters {
   display: flex;
   gap: 12px;
