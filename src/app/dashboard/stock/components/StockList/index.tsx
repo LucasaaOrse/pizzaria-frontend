@@ -198,40 +198,44 @@ export default function StockList({ initialItems, initialTypes }: Props) {
 
       {/* Lista */}
       <section className={styles.listOrders}>
-        {loading
-          ? <span className={styles.emptyItem}>Carregando…</span>
-          : filtered.length === 0
-            ? <span className={styles.emptyItem}>Nenhum item encontrado</span>
-            : filtered.map(item => (
-<div key={item.id} className={styles.orderRow}>
-    <div className={styles.orderItem}>
-      <div className={styles.tag} style={{ backgroundColor: getQuantityColor(item) }} />
-      <span>
-        {item.name}
-        <small
-          style={{
-            marginLeft: 12,
-            fontWeight: "bold",
-            color: Number(item.quantity) === 0 ? "red" : "gray"
-          }}
-        >
-          {item.quantity} {item.unit}
-        </small>
-      </span>
-    </div>
-    <div className={styles.rowActions}>
-      <button title="Adicionar quantidade" onClick={() => setAddItem(item)}>
-        <Plus size={20} />
-      </button>
-      <button title="Editar item" onClick={() => setEditItem(item)}>
-        <Edit3 size={20} />
-      </button>
-      <button title="Deletar item" onClick={() => setDelItem(item)}>
-        <Trash2 size={20} />
-      </button>
-    </div>
-  </div>
-))}
+        {loading ? (
+          <span className={styles.emptyItem}>Carregando…</span>
+        ) : filtered.length === 0 ? (
+          <span className={styles.emptyItem}>Nenhum item encontrado</span>
+        ) : (
+          filtered
+            .filter(item => Number(item.quantity) > 0) // <-- aqui é o filtro para mostrar só os com quantidade > 0
+            .map(item => (
+              <div key={item.id} className={styles.orderRow}>
+                <div className={styles.orderItem}>
+                  <div className={styles.tag} style={{ backgroundColor: getQuantityColor(item) }} />
+                  <span>
+                    {item.name}
+                    <small
+                      style={{
+                        marginLeft: 12,
+                        fontWeight: "bold",
+                        color: Number(item.quantity) === 0 ? "red" : "gray"
+                      }}
+                    >
+                      {item.quantity} {item.unit}
+                    </small>
+                  </span>
+                </div>
+                <div className={styles.rowActions}>
+                  <button title="Adicionar quantidade" onClick={() => setAddItem(item)}>
+                    <Plus size={20} />
+                  </button>
+                  <button title="Editar item" onClick={() => setEditItem(item)}>
+                    <Edit3 size={20} />
+                  </button>
+                  <button title="Deletar item" onClick={() => setDelItem(item)}>
+                    <Trash2 size={20} />
+                  </button>
+                </div>
+              </div>
+            ))
+        )}
 
 {/* BLOCO DOS ITENS FORA DE ESTOQUE */}
 {filtered.some(i => Number(i.quantity) === 0) && (
