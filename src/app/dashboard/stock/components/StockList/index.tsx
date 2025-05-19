@@ -22,6 +22,7 @@ export interface StockItem {
   quantity: number;
   type_id: number;
   type_name: string;
+  minimum?: number; // novo campo
 }
 
 export interface StockItemType {
@@ -54,7 +55,8 @@ export default function StockList({ initialItems, initialTypes }: Props) {
     name: "",
     typeId: "",
     unit: "",
-    quantity: ""
+    quantity: "",
+    minimum: ""
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -118,7 +120,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
     }
   }
 
- const filtered = filter === "todos"
+ const filtered = filter === "Todos"
   ? items
   : items.filter(i => (GROUPS[filter] || []).includes(i.type_name));
 
@@ -140,14 +142,15 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         name: form.name,
         type_id:  Number(form.typeId),
         unit: form.unit,
-        quantity: Number(form.quantity)
+        quantity: Number(form.quantity),
+        minimum: Number(form.minimum) || 0
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },});
       toast.success("Item adicionado ao estoque");
       setCreateOpen(false);
-      setForm({ name:"", typeId:"", unit:"", quantity:"" });
+      setForm({ name:"", typeId:"", unit:"", quantity:"", minimum: "" });
       await loadData();
     } catch {
       toast.error("Erro ao adicionar item");
@@ -286,6 +289,17 @@ export default function StockList({ initialItems, initialTypes }: Props) {
               min="0"
               step="0.01"
               value={form.quantity}
+              onChange={handleChange}
+            />
+          </label>
+          <label>
+            Mínimo em estoque
+            <input
+              name="minimum"
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.minimum}
               onChange={handleChange}
             />
           </label>
