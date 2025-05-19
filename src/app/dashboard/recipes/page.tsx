@@ -5,7 +5,7 @@ import { api } from "@/services/api";
 import styles from "./page.module.scss";
 import { toast } from "sonner";
 import { ChevronDown, ChevronUp, Edit3, Trash2 } from "lucide-react";
-import { getCookiesServer } from "@/lib/cookieServer"
+import { getCookieClient } from "@/lib/cookieClient"
 
 interface Ingredient {
   id: number;
@@ -25,7 +25,7 @@ export default async function RecipeManager() {
   const [products, setProducts] = useState<RecipeProduct[]>([]);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
-  const token = await getCookiesServer()
+  const token = await getCookieClient()
 
   useEffect(() => {
     async function load() {
