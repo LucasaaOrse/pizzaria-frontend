@@ -25,10 +25,12 @@ export default function Home() {
         { withCredentials: true } // garante envio/recebimento de cookie
       );
       
-      redirect('/dashboard')
+      
     } catch (err: any) {
       console.error("Falha no login:", err);
     }
+
+    redirect('/dashboard')
   }
 
   return (
