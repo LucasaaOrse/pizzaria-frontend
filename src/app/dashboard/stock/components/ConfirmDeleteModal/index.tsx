@@ -9,12 +9,14 @@ interface DeleteProps {
   item: StockItem;
   onClose(): void;
   onSuccess(): Promise<void>;
+  onOptimistic?(id: string): void;
 }
 
-export default function ConfirmDeleteModal({ item, onClose, onSuccess }: DeleteProps) {
+export default function ConfirmDeleteModal({ item, onClose, onSuccess, onOptimistic}: DeleteProps) {
   const [deleting, setDeleting] = useState<boolean>(false);
 
   async function handleDelete() {
+    onOptimistic?.(item.id);
     setDeleting(true);
     try {
       await api.delete(`/stock/${item.id}`);

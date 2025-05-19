@@ -3,11 +3,9 @@
 import React, { useState } from "react";
 import ReactModal from "react-modal";
 import styles from "../../styles.module.scss";
-import { RefreshCcw, } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/services/api";
-
-
 
 import AddQuantityModal    from "../AddQuantityModal";
 import RemoveQuantityModal from "../RemoveQuantityModal";
@@ -37,11 +35,11 @@ interface Props {
 export default function StockList({ initialItems, initialTypes }: Props) {
   // Lista e filtros
   const [items, setItems]       = useState<StockItem[]>(initialItems);
-  const [types] = useState<StockItemType[]>(initialTypes);
-  const [filter, setFilter]    = useState<string>("todos");
-  const [loading, setLoading]  = useState(false);
+  const [types]                 = useState<StockItemType[]>(initialTypes);
+  const [filter, setFilter]     = useState<string>("todos");
+  const [loading, setLoading]   = useState(false);
 
-  // Estado do modal de criação de item
+  // Modal de criação
   const [createOpen, setCreateOpen] = useState(false);
   const [form, setForm]             = useState({
     name: "",
@@ -51,11 +49,31 @@ export default function StockList({ initialItems, initialTypes }: Props) {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  // Estados para cada modal de ação
+  // Modais de ação
   const [addItem,    setAddItem]    = useState<StockItem | null>(null);
   const [removeItem, setRemoveItem] = useState<StockItem | null>(null);
   const [editItem,   setEditItem]   = useState<StockItem | null>(null);
   const [delItem,    setDelItem]    = useState<StockItem | null>(null);
+
+  // 1) callbacks de update otimista
+  function addQuantityLocally(id: string, delta: number) {
+    setItems(old =>
+      old.map(i => i.id === id ? { ...i, quantity: i.quantity + delta } : i)
+    );
+  }
+  function removeQuantityLocally(id: string, delta: number) {
+    setItems(old =>
+      old.map(i => i.id === id ? { ...i, quantity: i.quantity - delta } : i)
+    );
+  }
+  function updateItemLocally(updated: StockItem) {
+    setItems(old =>
+      old.map(i => i.id === updated.id ? updated : i)
+    );
+  }
+  function deleteItemLocally(id: string) {
+    setItems(old => old.filter(i => i.id !== id));
+  }
 
   // Refetch
   async function loadData() {
@@ -73,10 +91,10 @@ export default function StockList({ initialItems, initialTypes }: Props) {
 
   // Filtra por tipo
   const filtered = filter === "todos"
-  ? items
-  : items.filter(i => i.type === filter);
+    ? items
+    : items.filter(i => i.type === filter);
 
-  // Handle criação de item novo
+  // Criação de item novo
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>
   ) {
@@ -165,7 +183,6 @@ export default function StockList({ initialItems, initialTypes }: Props) {
                     </span>
                   </div>
                   <div className={styles.rowActions}>
-                    {/* Abre cada modal passando o item */}
                     <button
                       title="Adicionar quantidade"
                       onClick={() => setAddItem(item)}
@@ -252,11 +269,12 @@ export default function StockList({ initialItems, initialTypes }: Props) {
       </ReactModal>
 
       {/* Modais de ação */}
-      {addItem    && (
+      {addItem && (
         <AddQuantityModal
           item={addItem}
           onClose={() => setAddItem(null)}
           onSuccess={loadData}
+          onOptimistic={addQuantityLocally}
         />
       )}
       {removeItem && (
@@ -264,26 +282,26 @@ export default function StockList({ initialItems, initialTypes }: Props) {
           item={removeItem}
           onClose={() => setRemoveItem(null)}
           onSuccess={loadData}
+          onOptimistic={removeQuantityLocally}
         />
       )}
-      {editItem   && (
+      {editItem && (
         <EditItemModal
           item={editItem}
           types={types.map(t => t.name)}
           onClose={() => setEditItem(null)}
           onSuccess={loadData}
+          onOptimistic={updateItemLocally}
         />
       )}
-      {delItem    && (
+      {delItem && (
         <ConfirmDeleteModal
           item={delItem}
           onClose={() => setDelItem(null)}
           onSuccess={loadData}
+          onOptimistic={deleteItemLocally}
         />
       )}
-
-      
-
     </main>
   );
 }

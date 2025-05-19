@@ -11,9 +11,10 @@ interface AddProps {
   item: StockItem;
   onClose(): void;
   onSuccess(): Promise<void>;
+  onOptimistic?(id: string, delta: number): void;
 }
 
-export default function AddQuantityModal({ item, onClose, onSuccess }: AddProps) {
+export default function AddQuantityModal({ item, onClose, onSuccess, onOptimistic }: AddProps) {
   const [quantity, setQuantity] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -26,6 +27,7 @@ export default function AddQuantityModal({ item, onClose, onSuccess }: AddProps)
 
     setSaving(true);
     try {
+      onOptimistic?.(item.id, q);
       await api.post(
       "/stock/bulk-add",
       { items: [{ id: item.id, quantity: q }] },

@@ -10,9 +10,10 @@ interface EditProps {
   types: string[];
   onClose(): void;
   onSuccess(): Promise<void>;
+  onOptimistic?(updated: StockItem): void;
 }
 
-export default function EditItemModal({ item, types, onClose, onSuccess }: EditProps) {
+export default function EditItemModal({ item, types, onClose, onSuccess, onOptimistic }: EditProps) {
   const [form, setForm] = useState({ name: item.name, unit: item.unit, type: item.type });
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -27,12 +28,10 @@ export default function EditItemModal({ item, types, onClose, onSuccess }: EditP
     }
 
     setSaving(true);
+    const payload = { name: form.name, unit: form.unit, type_id: form.type};
+  onOptimistic?.({ ...item, ...payload });
     try {
-      await api.put(`/stock/${item.id}`, {
-        name: form.name,
-        unit: form.unit,
-        type: form.type
-      });
+      await api.put(`/stock/${item.id}`, payload);
       toast.success("Item atualizado com sucesso");
       onClose();
       await onSuccess();

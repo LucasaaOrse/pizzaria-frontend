@@ -9,9 +9,10 @@ interface RemoveProps {
   item: StockItem;
   onClose(): void;
   onSuccess(): Promise<void>;
+  onOptimistic?(id: string, delta: number): void;
 }
 
-export default function RemoveQuantityModal({ item, onClose, onSuccess }: RemoveProps) {
+export default function RemoveQuantityModal({ item, onClose, onSuccess,onOptimistic }: RemoveProps) {
   const [quantity, setQuantity] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -20,7 +21,9 @@ export default function RemoveQuantityModal({ item, onClose, onSuccess }: Remove
     const q = Number(quantity);
     if (q <= 0) return toast.error("Informe uma quantidade maior que zero");
 
+    
     setSaving(true);
+    onOptimistic?.(item.id, q);
     try {
       await api.post("/stock/bulk-remove", { items: [{ id: item.id, quantity: q }] });
       toast.success("Quantidade removida com sucesso");
