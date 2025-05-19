@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/services/api";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 
 export default function Home() {
   // Server Action
@@ -28,6 +27,7 @@ export default function Home() {
       
     } catch (err: any) {
       console.error("Falha no login:", err);
+      return
     }
 
     redirect('/dashboard')
