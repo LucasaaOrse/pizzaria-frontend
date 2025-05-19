@@ -5,6 +5,7 @@ import { api } from "@/services/api";
 import styles from "./page.module.scss";
 import { toast } from "sonner";
 import { ChevronDown, ChevronUp, Edit3, Trash2 } from "lucide-react";
+import { getCookiesServer } from "@/lib/cookieServer"
 
 interface Ingredient {
   id: number;
@@ -20,14 +21,20 @@ interface RecipeProduct {
   recipe: Ingredient[];    // veio do `all-with-recipes`
 }
 
-export default function RecipeManager() {
+export default async function RecipeManager() {
   const [products, setProducts] = useState<RecipeProduct[]>([]);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  const token = await getCookiesServer()
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await api.get<RecipeProduct[]>("/product/all-with-recipes");
+        const res = await api.get<RecipeProduct[]>("/product/all-with-recipes", {
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        });
         setProducts(res.data);
       } catch (err) {
         console.error(err);
