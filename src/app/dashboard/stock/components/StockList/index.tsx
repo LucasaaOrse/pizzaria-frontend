@@ -143,7 +143,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         type_id:  Number(form.typeId),
         unit: form.unit,
         quantity: Number(form.quantity),
-        minimum: Number(form.minimum) || 0
+        minimum_quantity: Number(form.minimum) || 0
       }, {
         headers: {
           Authorization: `Bearer ${token}`,

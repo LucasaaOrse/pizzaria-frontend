@@ -53,7 +53,7 @@ export default function EditItemModal({
       name:    form.name,
       unit:    form.unit,
       type_id: typeIdNum,
-      minimum: item.minimum?.toString() ?? ""
+      minimum_quantity: item.minimum?.toString() ?? ""
     };
 
     // otimização local: converta t.id para number
