@@ -59,6 +59,8 @@ export default function StockList({ initialItems, initialTypes }: Props) {
 
   const token = getCookieClient()
 
+  const isUnitInteger = (unit: string) => ["un", "u", "unid", "unidade"].includes(unit.toLowerCase());
+  const UNITS = ["g", "kg", "ml", "L", "un"];
   // 1) callbacks de update otimista
   function addQuantityLocally(id: string, delta: number) {
   setItems(old =>
@@ -201,7 +203,10 @@ export default function StockList({ initialItems, initialTypes }: Props) {
                     <span>
                       {item.name}
                       <small style={{ marginLeft: 12 }}>
-                        {item.quantity} {item.unit}
+                        {isUnitInteger(item.unit)
+                          ? `${Math.round(item.quantity)} ${item.unit}`
+                          : `${Number(item.quantity).toFixed(2)} ${item.unit}`
+                        }
                       </small>
                     </span>
                   </div>
@@ -263,7 +268,15 @@ export default function StockList({ initialItems, initialTypes }: Props) {
           </label>
           <label>
             Unidade
-            <input name="unit" value={form.unit} onChange={handleChange} />
+            <select name="unit" value={form.unit} onChange={handleChange}>
+              <option value="">Selecione</option>
+              {UNITS.map(u => (
+                <option key={u} value={u}>
+                  {u.toUpperCase()}
+                </option>
+              ))}
+            </select>
+
           </label>
           <label>
             Quantidade

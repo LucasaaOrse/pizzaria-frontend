@@ -18,6 +18,7 @@ export default function AddQuantityModal({ item, onClose, onSuccess, onOptimisti
   const [quantity, setQuantity] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false);
 
+  
   const token = getCookieClient()
 
   async function handleSubmit(e: React.FormEvent) {

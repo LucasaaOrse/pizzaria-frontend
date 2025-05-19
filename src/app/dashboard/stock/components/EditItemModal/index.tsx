@@ -37,6 +37,8 @@ export default function EditItemModal({
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
   }
 
+  const UNITS = ["g", "kg", "ml", "L", "un"];
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name || !form.unit || !form.typeId) {
@@ -115,11 +117,14 @@ export default function EditItemModal({
         </label>
         <label>
           Unidade
-          <input
-            name="unit"
-            value={form.unit}
-            onChange={handleChange}
-          />
+          <select name="unit" value={form.unit} onChange={handleChange}>
+            <option value="">Selecione</option>
+            {UNITS.map(u => (
+              <option key={u} value={u}>
+                {u.toUpperCase()}
+              </option>
+            ))}
+          </select>
         </label>
         <footer className={styles.formFooter}>
           <button type="button" onClick={onClose} disabled={saving}>
