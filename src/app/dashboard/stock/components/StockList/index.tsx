@@ -92,7 +92,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
 
   // Refetch
   async function loadData() {
-    const token = getCookieClient()
+    const token = await getCookieClient()
     setLoading(true);
     try {
       const res = await api.get<StockItem[]>("/stock", {
