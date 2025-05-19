@@ -29,7 +29,8 @@ export default function EditItemModal({
     name:   item.name,
     unit:   item.unit,
     typeId: String(item.type_id),  // pode vir string ou number
-    minimum: item.minimum_quantity?.toString() ?? ""
+    minimum: item.minimum_quantity?.toString() ?? "",
+    quantity: item.quantity?.toString() ?? ""
   });
   const [saving, setSaving] = useState(false);
   const token = getCookieClient();
@@ -53,7 +54,8 @@ export default function EditItemModal({
       name:    form.name,
       unit:    form.unit,
       type_id: typeIdNum,
-      minimum_quantity: form.minimum === "" ? null : Number(form.minimum)
+      minimum_quantity: form.minimum === "" ? null : Number(form.minimum),
+      quantity: form.quantity === "" ? null : Number(form.quantity)
     };
 
     // otimização local: converta t.id para number
@@ -128,6 +130,17 @@ export default function EditItemModal({
               </option>
             ))}
           </select>
+        </label>
+        <label>
+          Quantidade atual
+          <input
+            name="quantity"
+            type="number"
+            min="0"
+            step="0.01"
+            value={form.quantity}
+            onChange={handleChange}
+          />
         </label>
         <label>
           Mínimo em estoque
