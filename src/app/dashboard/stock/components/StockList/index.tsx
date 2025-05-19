@@ -44,7 +44,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
   const [createOpen, setCreateOpen] = useState(false);
   const [form, setForm]             = useState({
     name: "",
-    type: "",
+    typeId: "",
     unit: "",
     quantity: ""
   });
@@ -122,14 +122,14 @@ export default function StockList({ initialItems, initialTypes }: Props) {
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.type || !form.unit || Number(form.quantity) <= 0) {
+    if (!form.name || !form.typeId || !form.unit || Number(form.quantity) <= 0) {
       return toast.error("Preencha todos os campos corretamente");
     }
     setSubmitting(true);
     try {
       await api.post("/stock", {
         name: form.name,
-        type_id: form.type,
+        type_id:  Number(form.typeId),
         unit: form.unit,
         quantity: Number(form.quantity)
       }, {
@@ -138,7 +138,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         },});
       toast.success("Item adicionado ao estoque");
       setCreateOpen(false);
-      setForm({ name:"", type:"", unit:"", quantity:"" });
+      setForm({ name:"", typeId:"", unit:"", quantity:"" });
       await loadData();
     } catch {
       toast.error("Erro ao adicionar item");
@@ -251,7 +251,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
           </label>
           <label>
             Tipo
-            <select name="type" value={form.type} onChange={handleChange}>
+            <select name="type" value={form.typeId} onChange={handleChange}>
               <option value="">Selecione</option>
               {types.map(t => (
                 <option key={t.id} value={t.name}>
