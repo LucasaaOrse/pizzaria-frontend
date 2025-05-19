@@ -251,10 +251,10 @@ export default function StockList({ initialItems, initialTypes }: Props) {
           </label>
           <label>
             Tipo
-            <select name="type" value={form.typeId} onChange={handleChange}>
+            <select name="typeId" value={form.typeId} onChange={handleChange}>
               <option value="">Selecione</option>
               {types.map(t => (
-                <option key={t.id} value={t.name}>
+                <option key={t.id} value={t.id}>
                   {t.name[0].toUpperCase() + t.name.slice(1)}
                 </option>
               ))}
