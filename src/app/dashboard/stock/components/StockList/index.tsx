@@ -6,6 +6,7 @@ import styles from "../../styles.module.scss";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/services/api";
+import { getCookieClient } from "@/lib/cookieClient";
 
 import AddQuantityModal    from "../AddQuantityModal";
 import RemoveQuantityModal from "../RemoveQuantityModal";
@@ -55,17 +56,31 @@ export default function StockList({ initialItems, initialTypes }: Props) {
   const [editItem,   setEditItem]   = useState<StockItem | null>(null);
   const [delItem,    setDelItem]    = useState<StockItem | null>(null);
 
+  const token = getCookieClient()
+
   // 1) callbacks de update otimista
   function addQuantityLocally(id: string, delta: number) {
-    setItems(old =>
-      old.map(i => i.id === id ? { ...i, quantity: i.quantity + delta } : i)
-    );
-  }
+  setItems(old =>
+    old.map(i => {
+      if (i.id !== id) return i;
+      const current = typeof i.quantity === "string"
+        ? parseFloat(i.quantity)
+        : i.quantity;
+      return { ...i, quantity: current + delta };
+    })
+  );
+}
   function removeQuantityLocally(id: string, delta: number) {
-    setItems(old =>
-      old.map(i => i.id === id ? { ...i, quantity: i.quantity - delta } : i)
-    );
-  }
+  setItems(old =>
+    old.map(i => {
+      if (i.id !== id) return i;
+      const current = typeof i.quantity === "string"
+        ? parseFloat(i.quantity)
+        : i.quantity;
+      return { ...i, quantity: current - delta };
+    })
+  );
+}
   function updateItemLocally(updated: StockItem) {
     setItems(old =>
       old.map(i => i.id === updated.id ? updated : i)
@@ -79,7 +94,10 @@ export default function StockList({ initialItems, initialTypes }: Props) {
   async function loadData() {
     setLoading(true);
     try {
-      const res = await api.get<StockItem[]>("/stock");
+      const res = await api.get<StockItem[]>("/stock", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },});
       setItems(res.data);
     } catch (err) {
       console.error(err);
