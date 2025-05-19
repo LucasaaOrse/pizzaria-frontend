@@ -1,64 +1,10 @@
-// app/(auth)/page.tsx  (ou src/app/page.tsx)
-import styles from "./page.module.scss";
-import logoImg from "/public/logo.svg";
-import Image from "next/image";
-import Link from "next/link";
-import { api } from "@/services/api";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import LoginForm from "./dashboard/components/loginForm";
 
 export default function Home() {
   // Server Action
-  async function handleLogin(formData: FormData) {
-    "use server";
-
-    // Converte em string e trim
-    const email = formData.get("email")?.toString().trim();
-    const password = formData.get("password")?.toString().trim();
-    if (!email || !password) return;
-
-    try {
-      // Faz POST /login e backend seta cookie
-      await api.post(
-        "/login",
-        { email, password },
-        { withCredentials: true } // garante envio/recebimento de cookie
-      );
-      
-      redirect('/dashboard')
-    } catch (err: any) {
-      console.error("Falha no login:", err);
-      alert(err.response?.data?.error || "Erro ao fazer login");
-    }
-  }
+  
 
   return (
-    <div className={styles.contaninerCenter}>
-      <Image src={logoImg} alt="Logo" />
-      <section className={styles.login}>
-        {/* action invoca a Server Action */}
-        <form action={handleLogin}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Digite o seu email"
-            className={styles.input}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="**********"
-            className={styles.input}
-            required
-          />
-          <button type="submit">Acessar</button>
-        </form>
-
-        <Link href="/signup" className={styles.text}>
-          Não possui conta? Cadastre-se
-        </Link>
-      </section>
-    </div>
+    <LoginForm />
   );
 }
