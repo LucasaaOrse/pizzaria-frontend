@@ -26,7 +26,11 @@ export default function AddQuantityModal({ item, onClose, onSuccess }: AddProps)
 
     setSaving(true);
     try {
-      await api.post("/stock/bulk-add", {  items: [{ id: item.id, quantity: q }], headers: { Authorization: `Bearer ${token}`} });
+      await api.post(
+      "/stock/bulk-add",
+      { items: [{ id: item.id, quantity: q }] },
+      { withCredentials: true }
+    );
       toast.success("Quantidade adicionada com sucesso");
       onClose();
       await onSuccess();
