@@ -131,7 +131,10 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         type: form.type,
         unit: form.unit,
         quantity: Number(form.quantity)
-      });
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },});
       toast.success("Item adicionado ao estoque");
       setCreateOpen(false);
       setForm({ name:"", type:"", unit:"", quantity:"" });
