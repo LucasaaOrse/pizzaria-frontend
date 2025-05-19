@@ -19,8 +19,9 @@ export interface StockItem {
   id: string;
   name: string;
   unit: string;
-  type: string;
   quantity: number;
+  type_id: number;
+  type_name: string;
 }
 
 export interface StockItemType {
@@ -111,7 +112,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
   // Filtra por tipo
   const filtered = filter === "todos"
     ? items
-    : items.filter(i => i.type === filter);
+    : items.filter(i => i.name === filter);
 
   // Criação de item novo
   function handleChange(
@@ -194,7 +195,7 @@ export default function StockList({ initialItems, initialTypes }: Props) {
                       className={styles.tag}
                       style={{
                         backgroundColor:
-                          item.type === "ingrediente" ? "#f1c40f" : "#3fffa3"
+                          item.type_name === "ingrediente" ? "#f1c40f" : "#3fffa3"
                       }}
                     />
                     <span>
@@ -308,14 +309,15 @@ export default function StockList({ initialItems, initialTypes }: Props) {
         />
       )}
       {editItem && (
-        <EditItemModal
-          item={editItem}
-          types={types.map(t => t.name)}
-          onClose={() => setEditItem(null)}
-          onSuccess={loadData}
-          onOptimistic={updateItemLocally}
-        />
-      )}
+      <EditItemModal
+        item={editItem}
+        types={initialTypes}          // array de StockItemType
+        onClose={() => setEditItem(null)}
+        onSuccess={loadData}
+        onOptimistic={updateItemLocally}
+      />
+    )}
+
       {delItem && (
         <ConfirmDeleteModal
           item={delItem}
