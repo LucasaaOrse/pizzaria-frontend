@@ -4,6 +4,7 @@ import styles from "../../styles.module.scss";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 import { StockItem } from "../StockList";
+import { getCookieClient } from "@/lib/cookieClient";
 
 interface DeleteProps {
   item: StockItem;
@@ -15,11 +16,16 @@ interface DeleteProps {
 export default function ConfirmDeleteModal({ item, onClose, onSuccess, onOptimistic}: DeleteProps) {
   const [deleting, setDeleting] = useState<boolean>(false);
 
+  const token = getCookieClient()
+
   async function handleDelete() {
     onOptimistic?.(item.id);
     setDeleting(true);
     try {
-      await api.delete(`/stock/${item.id}`);
+      await api.delete(`/stock/${item.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }});
       toast.success("Item deletado com sucesso");
       onClose();
       await onSuccess();

@@ -4,6 +4,7 @@ import styles from "../../styles.module.scss";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 import { StockItem } from "../StockList";
+import { getCookieClient } from "@/lib/cookieClient";
 
 interface EditProps {
   item: StockItem;
@@ -16,6 +17,8 @@ interface EditProps {
 export default function EditItemModal({ item, types, onClose, onSuccess, onOptimistic }: EditProps) {
   const [form, setForm] = useState({ name: item.name, unit: item.unit, type: item.type });
   const [saving, setSaving] = useState<boolean>(false);
+
+  const token = getCookieClient()
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -31,7 +34,10 @@ export default function EditItemModal({ item, types, onClose, onSuccess, onOptim
     const payload = { name: form.name, unit: form.unit, type_id: form.type};
   onOptimistic?.({ ...item, ...payload });
     try {
-      await api.put(`/stock/${item.id}`, payload);
+      await api.put(`/stock/${item.id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },});
       toast.success("Item atualizado com sucesso");
       onClose();
       await onSuccess();

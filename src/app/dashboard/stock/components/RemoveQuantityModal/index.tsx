@@ -4,7 +4,7 @@ import styles from "../../styles.module.scss";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 import { StockItem } from "../StockList";
-
+import { getCookieClient } from "@/lib/cookieClient";
 interface RemoveProps {
   item: StockItem;
   onClose(): void;
@@ -16,6 +16,8 @@ export default function RemoveQuantityModal({ item, onClose, onSuccess,onOptimis
   const [quantity, setQuantity] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false);
 
+  const token = getCookieClient()
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const q = Number(quantity);
@@ -25,7 +27,10 @@ export default function RemoveQuantityModal({ item, onClose, onSuccess,onOptimis
     setSaving(true);
     onOptimistic?.(item.id, q);
     try {
-      await api.post("/stock/bulk-remove", { items: [{ id: item.id, quantity: q }] });
+      await api.post("/stock/bulk-remove", { items: [{ id: item.id, quantity: q }] }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },});
       toast.success("Quantidade removida com sucesso");
       onClose();
       await onSuccess();
