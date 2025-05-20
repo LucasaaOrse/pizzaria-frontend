@@ -39,6 +39,13 @@
     padding: 8px;
     line-height: 1.5; // facilita leitura de texto longo
   }
+
+  input:focus,
+select:focus,
+textarea:focus {
+outline: none;
+border-color: var(--white);
+}
 }
 
 .labelImage {
@@ -140,9 +147,3 @@
   }
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--white);
-}
