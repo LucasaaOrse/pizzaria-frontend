@@ -60,35 +60,35 @@ export default function RecipeManager() {
   const toggle = (id: number) => setOpenId(prev => (prev === id ? null : id));
 
   const openModal = async (product: RecipeProduct, mode: Mode) => {
-    try {
-      const token = await getCookieClient();
-      const res = await api.get<StockItem[]>("/stock", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const ingredientes = res.data.filter(item => item.type_name === "ingrediente");
-      setStockItems(ingredientes);
+  try {
+    const token = await getCookieClient();
+    const res = await api.get<StockItem[]>("/stock", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const ingredientes = res.data.filter(item => item.type_name === "ingrediente");
+    setStockItems(ingredientes);
 
-      setModalMode(mode);
-      setSelectedProduct(product);
-      if (mode === 'edit') {
-      // Carrega do backend via GET /recipe/:product_id
-      const r = await api.get<{
-        ingredient_id: number;
-        quantity: number;
-      }[]>(`/recipe/${product.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    setModalMode(mode);
+    setSelectedProduct(product);
+
+    if (mode === 'edit') {
+      const r = await api.get<{ ingredient_id: number; quantity: number }[]>(
+        `/recipe/${product.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setExistingIngredients(
         r.data.map(i => ({ stockItemId: i.ingredient_id, quantity: i.quantity }))
       );
     } else {
       setExistingIngredients([]);
     }
-    } catch (err) {
-      console.error(err);
-      toast.error("Erro ao carregar ingredientes do estoque");
-    }
-  };
+
+    setShowModal(true);
+  } catch (err) {
+    console.error(err);
+    toast.error("Erro ao carregar ingredientes do estoque");
+  }
+};
 
   const handleSaveSuccess = () => {
     setShowModal(false);
