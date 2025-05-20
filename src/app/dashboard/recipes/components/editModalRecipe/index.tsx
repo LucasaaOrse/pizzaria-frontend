@@ -1,4 +1,4 @@
-// components/EditRecipeModal.tsx (atualizado)
+// components/EditRecipeModal.tsx (modo add/edit unificado)
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -20,10 +20,14 @@ interface IngredientForm {
   quantity: number;
 }
 
+type Mode = 'add' | 'edit';
+
 interface EditRecipeModalProps {
   isOpen: boolean;
   product: { id: number; name: string };
   stockItems: StockItem[];
+  mode: Mode;
+  existingIngredients?: IngredientForm[]; // para edit
   onClose: () => void;
   onSaveSuccess: () => void;
 }
@@ -32,6 +36,8 @@ export default function EditRecipeModal({
   isOpen,
   product,
   stockItems,
+  mode,
+  existingIngredients = [],
   onClose,
   onSaveSuccess
 }: EditRecipeModalProps) {
@@ -42,32 +48,33 @@ export default function EditRecipeModal({
 
   useEffect(() => {
     if (isOpen) {
-      // reinicializa lista de disponíveis e selecionados
       setAvailable(stockItems);
-      setSelected([]);
+      setSelected(
+        mode === 'edit'
+          ? existingIngredients.map(e => ({ ...e }))
+          : []
+      );
       setSelectedId(stockItems[0]?.id || 0);
     }
-  }, [isOpen, stockItems]);
+  }, [isOpen, stockItems, mode, existingIngredients]);
 
   const addIngredient = () => {
     if (!selectedId) return;
-    // evita duplicatas
-    if (selected.find(i => i.stockItemId === selectedId)) return;
+    if (selected.some(i => i.stockItemId === selectedId)) return;
     setSelected(prev => [...prev, { stockItemId: selectedId, quantity: 1 }]);
   };
 
   const updateQuantity = (id: number, value: string) => {
-  // Remove zeros à esquerda antes de converter
-  const sanitized = value.replace(/^0+(?=\d)/, "");
-  const quantity = sanitized === "" ? 0 : Number(sanitized);
-  setSelected(prev =>
-    prev.map(item =>
-      item.stockItemId === id
-        ? { ...item, quantity }
-        : item
-    )
-  );
-};
+    const sanitized = value.replace(/^0+(?=\d)/, "");
+    const quantity = sanitized === "" ? 0 : Number(sanitized);
+    setSelected(prev =>
+      prev.map(item =>
+        item.stockItemId === id
+          ? { ...item, quantity }
+          : item
+      )
+    );
+  };
 
   const removeIngredient = (id: number) => {
     setSelected(prev => prev.filter(item => item.stockItemId !== id));
@@ -80,18 +87,21 @@ export default function EditRecipeModal({
     setSaving(true);
     try {
       const token = await getCookieClient();
-      const payload = selected.map(item => ({
-        stock_item_id: item.stockItemId,
-        quantity: item.quantity
-      }));
-
-      await api.post(
-        `/product/${product.id}/recipe`,
-        { ingredients: payload },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      toast.success("Receita atualizada com sucesso");
+      const payload = selected.map(item => ({ stock_item_id: item.stockItemId, quantity: item.quantity }));
+      if (mode === 'add') {
+        await api.post(
+          "/product/" + product.id + "/recipe",
+          { ingredients: payload },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } else {
+        await api.put(
+          "/product/" + product.id + "/recipe",
+          { ingredients: payload },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+      toast.success(mode === 'add' ? "Receita adicionada com sucesso" : "Receita atualizada com sucesso");
       onSaveSuccess();
       onClose();
     } catch (err) {
@@ -111,12 +121,11 @@ export default function EditRecipeModal({
       overlayClassName={styles.overlay}
     >
       <div className={styles.header}>
-        <h2>Editar Receita</h2>
+        <h2>{mode === 'add' ? 'Adicionar Receita' : 'Editar Receita'}</h2>
         <button onClick={onClose} className={styles.closeBtn}>×</button>
       </div>
       <p className={styles.modalSubtitle}>{product.name}</p>
-
-      <div className={styles.form}>  
+      <div className={styles.form}>
         <label>
           Ingredientes disponíveis
           <div className={styles.addRow}>
@@ -163,8 +172,8 @@ export default function EditRecipeModal({
           <button type="button" onClick={onClose} disabled={saving}>
             Cancelar
           </button>
-          <button type="button" onClick={handleSave} disabled={saving}>
-            {saving ? "Salvando…" : "Confirmar e Salvar"}
+          <button type="button" onClick={handleSave} disabled={saving} className="confirm">
+            {saving ? "Salvando…" : mode === 'add' ? "Adicionar Receita" : "Atualizar Receita"}
           </button>
         </div>
       </div>
