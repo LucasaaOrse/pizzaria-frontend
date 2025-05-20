@@ -71,15 +71,19 @@ export default function RecipeManager() {
       setModalMode(mode);
       setSelectedProduct(product);
       if (mode === 'edit') {
-        // preparar existing ingredients
-        setExistingIngredients(
-          product.recipe.map(i => ({ stockItemId: i.id, quantity: i.quantity }))
-        );
-      } else {
-        setExistingIngredients([]);
-      }
-
-      setShowModal(true);
+      // Carrega do backend via GET /recipe/:product_id
+      const r = await api.get<{
+        ingredient_id: number;
+        quantity: number;
+      }[]>(`/recipe/${product.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setExistingIngredients(
+        r.data.map(i => ({ stockItemId: i.ingredient_id, quantity: i.quantity }))
+      );
+    } else {
+      setExistingIngredients([]);
+    }
     } catch (err) {
       console.error(err);
       toast.error("Erro ao carregar ingredientes do estoque");

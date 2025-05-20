@@ -81,36 +81,38 @@ export default function EditRecipeModal({
   };
 
   const handleSave = async () => {
-    if (selected.length === 0) {
-      return toast.error("Adicione ao menos 1 ingrediente");
-    }
-    setSaving(true);
-    try {
-      const token = await getCookieClient();
-      const payload = selected.map(item => ({ stock_item_id: item.stockItemId, quantity: item.quantity }));
-      if (mode === 'add') {
-        await api.post(
-          "/product/" + product.id + "/recipe",
-          { ingredients: payload },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      } else {
-        await api.put(
-          "/product/" + product.id + "/recipe",
-          { ingredients: payload },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      }
-      toast.success(mode === 'add' ? "Receita adicionada com sucesso" : "Receita atualizada com sucesso");
-      onSaveSuccess();
-      onClose();
-    } catch (err) {
-      console.error(err);
-      toast.error("Erro ao salvar receita");
-    } finally {
-      setSaving(false);
-    }
-  };
+  if (selected.length === 0) {
+    return toast.error("Adicione ao menos 1 ingrediente");
+  }
+  setSaving(true);
+  try {
+    const token = await getCookieClient();
+    // monta o array no formato esperado pelo backend:
+    const payload = selected.map(item => ({
+      ingredient_id: item.stockItemId,
+      quantity: item.quantity
+    }));
+
+    // Chama sempre POST /recipe/:product_id
+    await api.post(
+      `/recipe/${product.id}`,
+      { ingredients: payload },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    toast.success(mode === 'add'
+      ? "Receita adicionada com sucesso"
+      : "Receita atualizada com sucesso"
+    );
+    onSaveSuccess();
+    onClose();
+  } catch (err) {
+    console.error(err);
+    toast.error("Erro ao salvar receita");
+  } finally {
+    setSaving(false);
+  }
+};
 
   return (
     <ReactModal
