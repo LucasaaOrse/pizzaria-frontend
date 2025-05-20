@@ -153,6 +153,7 @@ export function ProductManager({ categories, initialProducts }: Props) {
               alt="Preview"
               fill
               className={styles.preview}
+              unoptimized
             />
           )}
         </label>
@@ -173,11 +174,13 @@ export function ProductManager({ categories, initialProducts }: Props) {
         </select>
 
         <input
+          className={styles.input}
           value={formState.name}
           onChange={(e) => setFormState((s) => ({ ...s, name: e.target.value }))}
           placeholder="Nome"
         />
         <input
+          className={styles.input}
           type="number"
           step="0.01"
           value={formState.price}
@@ -197,12 +200,13 @@ export function ProductManager({ categories, initialProducts }: Props) {
         <h2>Produtos cadastrados</h2>
         {products.map((product) => (
           <div key={product.id} className={styles.productCard}>
-            <Image
-              src={product.banner}
-              alt={product.name}
-              width={60}
-              height={60}
-            />
+          <Image
+            src={product.banner}
+            alt={product.name}
+            width={60}
+            height={60}
+            unoptimized
+          />
             <strong>{product.name}</strong>
             <span>R$ {product.price.toFixed(2)}</span>
             <div className={styles.actions}>
