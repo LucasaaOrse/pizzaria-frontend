@@ -21,7 +21,7 @@ interface RecipeProduct {
   recipe: Ingredient[];    // veio do `all-with-recipes`
 }
 
-export default async function RecipeManager() {
+export default function RecipeManager() {
   const [products, setProducts] = useState<RecipeProduct[]>([]);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
