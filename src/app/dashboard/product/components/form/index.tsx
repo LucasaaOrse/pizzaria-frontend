@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, ChangeEvent, useRef } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import Image from "next/image";
 import styles from "./styles.module.scss";
-import { UploadCloud, Trash2, Pencil } from "lucide-react";
+import { UploadCloud, Trash2, Pencil, PlusCircle } from "lucide-react";
 import { Button } from "@/app/dashboard/components/button";
 import { api } from "@/services/api";
 import { getCookieClient } from "@/lib/cookieClient";
@@ -33,6 +33,7 @@ export function ProductManager({ categories, initialProducts }: Props) {
   const [image, setImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [formState, setFormState] = useState({
     id: "",
@@ -85,19 +86,18 @@ export function ProductManager({ categories, initialProducts }: Props) {
       });
       setProducts(refreshed.data);
 
-      setFormState({
-        id: "",
-        name: "",
-        price: "",
-        description: "",
-        category: ""
-      });
-      setImage(null);
-      setPreviewImage("");
-      fileInputRef.current?.value && (fileInputRef.current.value = "");
-    } catch (err) {
+      resetForm();
+      setIsModalOpen(false);
+    } catch {
       toast.error("Erro ao salvar produto");
     }
+  }
+
+  function resetForm() {
+    setFormState({ id: "", name: "", price: "", description: "", category: "" });
+    setImage(null);
+    setPreviewImage("");
+    fileInputRef.current?.value && (fileInputRef.current.value = "");
   }
 
   function handleFile(e: ChangeEvent<HTMLInputElement>) {
@@ -120,6 +120,7 @@ export function ProductManager({ categories, initialProducts }: Props) {
       category: product.category_id,
     });
     setPreviewImage(product.banner);
+    setIsModalOpen(true);
   }
 
   async function handleDelete(id: string) {
@@ -137,89 +138,58 @@ export function ProductManager({ categories, initialProducts }: Props) {
 
   return (
     <main className={styles.container}>
-      <h1>{formState.id ? "Editar produto" : "Novo produto"}</h1>
-      <form className={styles.form} action={handleSubmit}>
-        <label className={styles.labelImage}>
-          <span><UploadCloud size={30} color="#FFF" /></span>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFile}
-          />
-          {previewImage && (
-            <Image
-              src={previewImage}
-              alt="Preview"
-              fill
-              className={styles.preview}
-              unoptimized
-            />
-          )}
-        </label>
-
-        <select
-          name="category"
-          value={formState.category}
-          onChange={(e) =>
-            setFormState((s) => ({ ...s, category: e.target.value }))
-          }
-        >
-          <option value="">Selecione uma categoria</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          className={styles.input}
-          value={formState.name}
-          onChange={(e) => setFormState((s) => ({ ...s, name: e.target.value }))}
-          placeholder="Nome"
-        />
-        <input
-          className={styles.input}
-          type="number"
-          step="0.01"
-          value={formState.price}
-          onChange={(e) => setFormState((s) => ({ ...s, price: e.target.value }))}
-          placeholder="Preço"
-        />
-        <textarea
-          value={formState.description}
-          onChange={(e) => setFormState((s) => ({ ...s, description: e.target.value }))}
-          placeholder="Descrição"
-        />
-
-        <Button name={formState.id ? "Atualizar" : "Cadastrar produto"} />
-      </form>
-
       <div className={styles.productList}>
-        <h2>Produtos cadastrados</h2>
+        <div className={styles.headerRow}>
+          <h2>Produtos cadastrados</h2>
+          <button onClick={() => { resetForm(); setIsModalOpen(true); }} className={styles.addButton}>
+            <PlusCircle size={20} />
+            Novo produto
+          </button>
+        </div>
         {products.map((product) => (
           <div key={product.id} className={styles.productCard}>
-          <Image
-            src={product.banner}
-            alt={product.name}
-            width={60}
-            height={60}
-            unoptimized
-          />
+            <Image src={product.banner} alt={product.name} width={60} height={60} unoptimized />
             <strong>{product.name}</strong>
             <span>R$ {product.price.toFixed(2)}</span>
             <div className={styles.actions}>
-              <button onClick={() => handleEdit(product)}>
-                <Pencil size={16} />
-              </button>
-              <button onClick={() => handleDelete(product.id)}>
-                <Trash2 size={16} color="red" />
-              </button>
+              <button onClick={() => handleEdit(product)}><Pencil size={16} /></button>
+              <button onClick={() => handleDelete(product.id)}><Trash2 size={16} color="red" /></button>
             </div>
           </div>
         ))}
       </div>
+
+      {isModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h1>{formState.id ? "Editar produto" : "Novo produto"}</h1>
+            <form className={styles.form} action={handleSubmit}>
+              <label className={styles.labelImage}>
+                <span><UploadCloud size={30} color="#FFF" /></span>
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFile} />
+                {previewImage && (
+                  <Image src={previewImage} alt="Preview" fill className={styles.preview} unoptimized />
+                )}
+              </label>
+
+              <select value={formState.category} onChange={(e) => setFormState(s => ({ ...s, category: e.target.value }))}>
+                <option value="">Selecione uma categoria</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+
+              <input className={styles.input} value={formState.name} onChange={(e) => setFormState(s => ({ ...s, name: e.target.value }))} placeholder="Nome" />
+              <input className={styles.input} type="number" step="0.01" value={formState.price} onChange={(e) => setFormState(s => ({ ...s, price: e.target.value }))} placeholder="Preço" />
+              <textarea value={formState.description} onChange={(e) => setFormState(s => ({ ...s, description: e.target.value }))} placeholder="Descrição" />
+              <div className={styles.modalActions}>
+                <Button name={formState.id ? "Atualizar" : "Cadastrar produto"} />
+                <button type="button" onClick={() => setIsModalOpen(false)} className={styles.cancelBtn}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
