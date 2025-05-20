@@ -1,3 +1,4 @@
+// page.tsx (RecipeManager atualizado)
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -52,11 +53,9 @@ export default function RecipeManager() {
     load();
   }, []);
 
-  function toggle(id: number) {
-    setOpenId(prev => (prev === id ? null : id));
-  }
+  const toggle = (id: number) => setOpenId(prev => (prev === id ? null : id));
 
-  async function handleEditRecipe(product: RecipeProduct) {
+  const handleEditRecipe = async (product: RecipeProduct) => {
     try {
       const token = await getCookieClient();
       const res = await api.get<StockItem[]>("/stock", {
@@ -70,7 +69,7 @@ export default function RecipeManager() {
       console.error(err);
       toast.error("Erro ao carregar ingredientes do estoque");
     }
-  }
+  };
 
   return (
     <main className={styles.container}>

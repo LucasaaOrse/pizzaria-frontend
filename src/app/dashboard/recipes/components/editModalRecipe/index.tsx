@@ -1,3 +1,4 @@
+// components/EditRecipeModal.tsx (atualizado)
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -29,9 +30,9 @@ export default function EditRecipeModal({ isOpen, product, stockItems, onClose }
   const [formItems, setFormItems] = useState<IngredientForm[]>([]);
   const [saving, setSaving] = useState(false);
 
+  // Sempre inicializa formItems com base em stockItems quando o modal abre
   useEffect(() => {
-    if (isOpen) {
-      // inicializa formulário sem quantidades
+    if (isOpen && stockItems.length) {
       setFormItems(
         stockItems.map(item => ({ stockItemId: item.id, quantity: 0 }))
       );
@@ -50,7 +51,6 @@ export default function EditRecipeModal({ isOpen, product, stockItems, onClose }
     setSaving(true);
     try {
       const token = await getCookieClient();
-      // envia apenas itens com quantidade > 0
       const payload = formItems
         .filter(f => f.quantity > 0)
         .map(f => ({ stock_item_id: f.stockItemId, quantity: f.quantity }));
@@ -81,17 +81,17 @@ export default function EditRecipeModal({ isOpen, product, stockItems, onClose }
     >
       <h2>Editar Receita: {product.name}</h2>
       <form className={styles.form} onSubmit={e => e.preventDefault()}>
-        {stockItems.map(item => {
-          const formItem = formItems.find(f => f.stockItemId === item.id)!;
+        {formItems.map(f => {
+          const stockInfo = stockItems.find(item => item.id === f.stockItemId);
           return (
-            <label key={item.id} className={styles.modalField}>
-              {item.name} ({item.unit})
+            <label key={f.stockItemId} className={styles.modalField}>
+              {stockInfo ? `${stockInfo.name} (${stockInfo.unit})` : ""}
               <input
                 type="number"
                 min="0"
                 step="any"
-                value={formItem.quantity}
-                onChange={e => handleChange(item.id, e.target.value)}
+                value={f.quantity}
+                onChange={e => handleChange(f.stockItemId, e.target.value)}
               />
             </label>
           );
