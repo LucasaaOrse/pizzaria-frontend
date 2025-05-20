@@ -95,7 +95,7 @@ export default function EditRecipeModal({
 
     // Chama sempre POST /recipe/:product_id
     await api.post(
-      `/recipe/${product.id}`,
+      `/recipes/${product.id}`,
       { ingredients: payload },
       { headers: { Authorization: `Bearer ${token}` } }
     );
