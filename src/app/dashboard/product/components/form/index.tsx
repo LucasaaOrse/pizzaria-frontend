@@ -189,32 +189,32 @@ export function ProductManager({ categories, initialProducts }: Props) {
                 <Button name={formState.id ? "Atualizar" : "Cadastrar produto"} />
                 <button type="button" onClick={() => setIsModalOpen(false)} className={styles.cancelBtn}>Cancelar</button>
               </div>
-              {confirmDeleteId && (
-                <div className={styles.modalOverlay}>
-                  <div className={styles.modalContent}>
-                    <h2>Confirmar exclusão</h2>
-                    <p>Tem certeza que deseja excluir este produto?</p>
-                    <div className={styles.modalActions}>
-                      <button
-                        className={styles.deleteBtn}
-                        onClick={() => {
-                          handleDelete(confirmDeleteId);
-                          setConfirmDeleteId(null);
-                        }}
-                      >
-                        Confirmar
-                      </button>
-                      <button
-                        className={styles.cancelBtn}
-                        onClick={() => setConfirmDeleteId(null)}
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </form>
+          </div>
+        </div>
+      )}
+      {confirmDeleteId && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h2>Confirmar exclusão</h2>
+            <p>Tem certeza que deseja excluir este produto?</p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.deleteBtn}
+                onClick={() => {
+                  handleDelete(confirmDeleteId);
+                  setConfirmDeleteId(null);
+                }}
+              >
+                Confirmar
+              </button>
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setConfirmDeleteId(null)}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}
