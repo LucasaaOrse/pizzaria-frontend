@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import ReactModal from "react-modal";
-import styles from "../../page.module.scss";
+import styles from "./EditRecipeModal.module.scss";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 import { getCookieClient } from "@/lib/cookieClient";
@@ -42,6 +42,7 @@ export default function EditRecipeModal({
 
   useEffect(() => {
     if (isOpen) {
+      // reinicializa lista de disponíveis e selecionados
       setAvailable(stockItems);
       setSelected([]);
       setSelectedId(stockItems[0]?.id || 0);
@@ -50,8 +51,9 @@ export default function EditRecipeModal({
 
   const addIngredient = () => {
     if (!selectedId) return;
-    if (selected.some(i => i.stockItemId === selectedId)) return;
-    setSelected(prev => [...prev, { stockItemId: selectedId, quantity: 0 }]);
+    // evita duplicatas
+    if (selected.find(i => i.stockItemId === selectedId)) return;
+    setSelected(prev => [...prev, { stockItemId: selectedId, quantity: 1 }]);
   };
 
   const updateQuantity = (id: number, value: string) => {
@@ -68,10 +70,9 @@ export default function EditRecipeModal({
     setSelected(prev => prev.filter(item => item.stockItemId !== id));
   };
 
-  async function handleSave() {
+  const handleSave = async () => {
     if (selected.length === 0) {
-      toast.error("Adicione ao menos 1 ingrediente");
-      return;
+      return toast.error("Adicione ao menos 1 ingrediente");
     }
     setSaving(true);
     try {
@@ -96,7 +97,7 @@ export default function EditRecipeModal({
     } finally {
       setSaving(false);
     }
-  }
+  };
 
   return (
     <ReactModal
@@ -106,54 +107,63 @@ export default function EditRecipeModal({
       className={styles.modal}
       overlayClassName={styles.overlay}
     >
-      <h2>Editar Receita</h2>
-      <p className={styles.modalSubtitle}>{product.name}</p>
-      <div className={styles.addRow}>
-        <select
-          value={selectedId}
-          onChange={e => setSelectedId(Number(e.target.value))}
-          className={styles.select}
-        >
-          {available.map(item => (
-            <option key={item.id} value={item.id}>
-              {item.name} ({item.unit})
-            </option>
-          ))}
-        </select>
-        <button onClick={addIngredient} className={styles.addBtn}>
-          <Plus />
-        </button>
+      <div className={styles.header}>
+        <h2>Editar Receita</h2>
+        <button onClick={onClose} className={styles.closeBtn}>×</button>
       </div>
+      <p className={styles.modalSubtitle}>{product.name}</p>
 
-      <ul className={styles.selectedList}>
-        {selected.map(item => {
-          const info = available.find(i => i.id === item.stockItemId)!;
-          return (
-            <li key={item.stockItemId} className={styles.selectedItem}>
-              <span>{info.name}:</span>
-              <input
-                type="number"
-                min="0"
-                step="any"
-                value={item.quantity}
-                onChange={e => updateQuantity(item.stockItemId, e.target.value)}
-                className={styles.inputQty}
-              />
-              <button onClick={() => removeIngredient(item.stockItemId)}>
-                <Trash2 />
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      <div className={styles.form}>  
+        <label>
+          Ingredientes disponíveis
+          <div className={styles.addRow}>
+            <select
+              value={selectedId}
+              onChange={e => setSelectedId(Number(e.target.value))}
+              className={styles.select}
+            >
+              {available.map(item => (
+                <option key={item.id} value={item.id}>
+                  {item.name} ({item.unit})
+                </option>
+              ))}
+            </select>
+            <button type="button" onClick={addIngredient} className={styles.addBtn}>
+              <Plus />
+            </button>
+          </div>
+        </label>
 
-      <div className={styles.modalActions}>
-        <button onClick={onClose} disabled={saving}>
-          Cancelar
-        </button>
-        <button onClick={handleSave} disabled={saving}>
-          {saving ? "Salvando…" : "Confirmar e Salvar"}
-        </button>
+        <ul className={styles.selectedList}>
+          {selected.map(item => {
+            const info = available.find(i => i.id === item.stockItemId)!;
+            return (
+              <li key={item.stockItemId} className={styles.selectedItem}>
+                <span>{info.name}</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  value={item.quantity}
+                  onChange={e => updateQuantity(item.stockItemId, e.target.value)}
+                  className={styles.inputQty}
+                />
+                <button type="button" onClick={() => removeIngredient(item.stockItemId)} className={styles.removeBtn}>
+                  <Trash2 />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className={styles.modalActions}>
+          <button type="button" onClick={onClose} disabled={saving}>
+            Cancelar
+          </button>
+          <button type="button" onClick={handleSave} disabled={saving}>
+            {saving ? "Salvando…" : "Confirmar e Salvar"}
+          </button>
+        </div>
       </div>
     </ReactModal>
   );

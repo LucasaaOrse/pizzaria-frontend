@@ -75,6 +75,7 @@
   margin: 0;
   padding: 0;
 }
+
 .item {
   display: flex;
   justify-content: space-between;
@@ -82,20 +83,25 @@
   padding: 6px 0;
   border-bottom: 1px solid var(--dark-700);
   color: var(--white);
+
   &:last-child {
     border-bottom: none;
   }
 }
-.actions {
-  display: flex;
-  gap: 8px;
-  button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    svg {
-      color: var(--white);
-    }
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+
+  svg {
+    color: var(--green-500);
+    transition: transform 0.2s;
+  }
+
+  &:hover svg {
+    transform: scale(1.2);
   }
 }
 
@@ -108,172 +114,8 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+
   &:hover {
     filter: brightness(1.1);
-  }
-}
-
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: var(--dark-800);
-  color: var(--white);
-  padding: 24px;
-  border-radius: 8px;
-  width: 400px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.modal h2 {
-  margin-bottom: 16px;
-}
-
-.modalActions {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.modalActions button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.modalActions button:first-child {
-  background: var(--red-700);
-  color: var(--white);
-}
-
-.modalActions button:last-child {
-  background: var(--green-700);
-  color: var(--black);
-}
-
-// page.module.scss (adicionar no final)
-.iconBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  svg {
-    color: var(--green-500);
-    transition: transform 0.2s;
-  }
-  &:hover svg {
-    transform: scale(1.2);
-  }
-}
-
-// styles.module.scss (pro modal)
-.overlay {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(6px);
-}
-
-.modal {
-  position: relative;
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.formField {
-  margin-bottom: 12px;
-  display: flex;
-  flex-direction: column;
-
-  input {
-    background: var(--dark-700);
-    color: var(--white);
-    border: 1px solid var(--dark-600);
-    border-radius: 4px;
-    padding: 8px;
-    margin-top: 4px;
-  }
-}
-
-.formFooter {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-/* Linha de adição de ingredientes */
-.addRow {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.select {
-  flex: 1;
-  padding: 8px;
-  border-radius: 4px;
-  background: var(--dark-700);
-  color: var(--white);
-  border: 1px solid var(--dark-600);
-}
-
-.addBtn {
-  padding: 8px 12px;
-  background: var(--green-700);
-  color: var(--black);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  &:hover {
-    filter: brightness(1.1);
-  }
-}
-
-/* Lista de ingredientes já selecionados */
-.selectedList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.selectedItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.selectedItem span {
-  flex: 1;
-  color: var(--white);
-}
-
-.inputQty {
-  width: 80px;
-  padding: 6px;
-  background: var(--dark-700);
-  border: 1px solid var(--dark-600);
-  border-radius: 4px;
-  color: var(--white);
-}
-
-.selectedItem button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  svg {
-    color: var(--red-500);
   }
 }

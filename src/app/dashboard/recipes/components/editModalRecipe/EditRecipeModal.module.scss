@@ -1,0 +1,135 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--dark-800);
+  color: var(--white);
+  padding: 24px;
+  border-radius: 8px;
+  width: 450px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal h2 {
+  margin-bottom: 8px;
+}
+
+.modalSubtitle {
+  margin-bottom: 16px;
+  color: var(--gray-200);
+}
+
+.addRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.select {
+  flex: 1;
+  padding: 8px;
+  border-radius: 4px;
+  background: var(--dark-700);
+  color: var(--white);
+  border: 1px solid var(--dark-600);
+}
+
+.addBtn {
+  padding: 8px 12px;
+  background: var(--green-700);
+  color: var(--black);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+.selectedList {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+}
+
+.selectedItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.selectedItem span {
+  flex: 1;
+}
+
+.inputQty {
+  width: 80px;
+  padding: 6px;
+  background: var(--dark-700);
+  border: 1px solid var(--dark-600);
+  border-radius: 4px;
+  color: var(--white);
+}
+
+.removeBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  svg {
+    color: var(--red-500);
+    transition: transform 0.2s;
+  }
+
+  &:hover svg {
+    transform: scale(1.2);
+  }
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.modalActions button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modalActions button:first-child {
+  background: var(--red-700);
+  color: var(--white);
+}
+
+.modalActions button:last-child {
+  background: var(--green-700);
+  color: var(--black);
+}
