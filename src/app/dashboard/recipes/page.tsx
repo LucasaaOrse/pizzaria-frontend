@@ -71,6 +71,27 @@ export default function RecipeManager() {
     }
   };
 
+  const fetchProducts = async () => {
+    try {
+      const token = await getCookieClient();
+      const res = await api.get<RecipeProduct[]>("/product/all-with-recipes", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProducts(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao carregar receitas");
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleSaveSuccess = () => {
+    fetchProducts();
+  };
+
   return (
     <main className={styles.container}>
       <h1 className={styles.title}>Receitas</h1>
@@ -130,6 +151,7 @@ export default function RecipeManager() {
           product={selectedProduct}
           stockItems={stockItems}
           onClose={() => setShowModal(false)}
+          onSaveSuccess={handleSaveSuccess}
         />
       )}
     </main>

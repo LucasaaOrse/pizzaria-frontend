@@ -7,6 +7,7 @@ import styles from "../../page.module.scss";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 import { getCookieClient } from "@/lib/cookieClient";
+import { Trash2, Plus } from "lucide-react";
 
 interface StockItem {
   id: number;
@@ -24,36 +25,61 @@ interface EditRecipeModalProps {
   product: { id: number; name: string };
   stockItems: StockItem[];
   onClose: () => void;
+  onSaveSuccess: () => void;
 }
 
-export default function EditRecipeModal({ isOpen, product, stockItems, onClose }: EditRecipeModalProps) {
-  const [formItems, setFormItems] = useState<IngredientForm[]>([]);
+export default function EditRecipeModal({
+  isOpen,
+  product,
+  stockItems,
+  onClose,
+  onSaveSuccess
+}: EditRecipeModalProps) {
+  const [available, setAvailable] = useState<StockItem[]>([]);
+  const [selected, setSelected] = useState<IngredientForm[]>([]);
+  const [selectedId, setSelectedId] = useState<number>(0);
   const [saving, setSaving] = useState(false);
 
-  // Sempre inicializa formItems com base em stockItems quando o modal abre
   useEffect(() => {
-    if (isOpen && stockItems.length) {
-      setFormItems(
-        stockItems.map(item => ({ stockItemId: item.id, quantity: 0 }))
-      );
+    if (isOpen) {
+      setAvailable(stockItems);
+      setSelected([]);
+      setSelectedId(stockItems[0]?.id || 0);
     }
   }, [isOpen, stockItems]);
 
-  function handleChange(id: number, value: string) {
-    setFormItems(prev =>
-      prev.map(f =>
-        f.stockItemId === id ? { ...f, quantity: Number(value) } : f
+  const addIngredient = () => {
+    if (!selectedId) return;
+    if (selected.some(i => i.stockItemId === selectedId)) return;
+    setSelected(prev => [...prev, { stockItemId: selectedId, quantity: 0 }]);
+  };
+
+  const updateQuantity = (id: number, value: string) => {
+    setSelected(prev =>
+      prev.map(item =>
+        item.stockItemId === id
+          ? { ...item, quantity: Number(value) }
+          : item
       )
     );
-  }
+  };
+
+  const removeIngredient = (id: number) => {
+    setSelected(prev => prev.filter(item => item.stockItemId !== id));
+  };
 
   async function handleSave() {
+    if (selected.length === 0) {
+      toast.error("Adicione ao menos 1 ingrediente");
+      return;
+    }
     setSaving(true);
     try {
       const token = await getCookieClient();
-      const payload = formItems
-        .filter(f => f.quantity > 0)
-        .map(f => ({ stock_item_id: f.stockItemId, quantity: f.quantity }));
+      const payload = selected.map(item => ({
+        stock_item_id: item.stockItemId,
+        quantity: item.quantity
+      }));
 
       await api.post(
         `/product/${product.id}/recipe`,
@@ -62,6 +88,7 @@ export default function EditRecipeModal({ isOpen, product, stockItems, onClose }
       );
 
       toast.success("Receita atualizada com sucesso");
+      onSaveSuccess();
       onClose();
     } catch (err) {
       console.error(err);
@@ -79,32 +106,55 @@ export default function EditRecipeModal({ isOpen, product, stockItems, onClose }
       className={styles.modal}
       overlayClassName={styles.overlay}
     >
-      <h2>Editar Receita: {product.name}</h2>
-      <form className={styles.form} onSubmit={e => e.preventDefault()}>
-        {formItems.map(f => {
-          const stockInfo = stockItems.find(item => item.id === f.stockItemId);
+      <h2>Editar Receita</h2>
+      <p className={styles.modalSubtitle}>{product.name}</p>
+      <div className={styles.addRow}>
+        <select
+          value={selectedId}
+          onChange={e => setSelectedId(Number(e.target.value))}
+          className={styles.select}
+        >
+          {available.map(item => (
+            <option key={item.id} value={item.id}>
+              {item.name} ({item.unit})
+            </option>
+          ))}
+        </select>
+        <button onClick={addIngredient} className={styles.addBtn}>
+          <Plus />
+        </button>
+      </div>
+
+      <ul className={styles.selectedList}>
+        {selected.map(item => {
+          const info = available.find(i => i.id === item.stockItemId)!;
           return (
-            <label key={f.stockItemId} className={styles.modalField}>
-              {stockInfo ? `${stockInfo.name} (${stockInfo.unit})` : ""}
+            <li key={item.stockItemId} className={styles.selectedItem}>
+              <span>{info.name}:</span>
               <input
                 type="number"
                 min="0"
                 step="any"
-                value={f.quantity}
-                onChange={e => handleChange(f.stockItemId, e.target.value)}
+                value={item.quantity}
+                onChange={e => updateQuantity(item.stockItemId, e.target.value)}
+                className={styles.inputQty}
               />
-            </label>
+              <button onClick={() => removeIngredient(item.stockItemId)}>
+                <Trash2 />
+              </button>
+            </li>
           );
         })}
-        <footer className={styles.formFooter}>
-          <button type="button" onClick={onClose} disabled={saving}>
-            Cancelar
-          </button>
-          <button type="button" onClick={handleSave} disabled={saving}>
-            {saving ? "Salvando…" : "Salvar Receita"}
-          </button>
-        </footer>
-      </form>
+      </ul>
+
+      <div className={styles.modalActions}>
+        <button onClick={onClose} disabled={saving}>
+          Cancelar
+        </button>
+        <button onClick={handleSave} disabled={saving}>
+          {saving ? "Salvando…" : "Confirmar e Salvar"}
+        </button>
+      </div>
     </ReactModal>
   );
 }
