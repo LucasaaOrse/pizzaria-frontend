@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import styles from "./page.module.scss";
+import styles from "../../../page.module.scss";
 
 export default function LoginForm({
   handleLogin,
