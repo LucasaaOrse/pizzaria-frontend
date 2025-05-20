@@ -8,7 +8,7 @@ export default async function Product() {
 
   const [categoriesResponse, productsResponse] = await Promise.all([
     api.get("/category", { headers: { Authorization: `Bearer ${token}` } }),
-    api.get("/product", { headers: { Authorization: `Bearer ${token}` } })
+    api.get("/product/all", { headers: { Authorization: `Bearer ${token}` } })
   ]);
 
   return (

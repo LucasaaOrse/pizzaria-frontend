@@ -80,7 +80,7 @@ export function ProductManager({ categories, initialProducts }: Props) {
         toast.success("Produto criado");
       }
 
-      const refreshed = await api.get("/product", {
+      const refreshed = await api.get("/product/all", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(refreshed.data);
@@ -125,7 +125,7 @@ export function ProductManager({ categories, initialProducts }: Props) {
   async function handleDelete(id: string) {
     const token = await getCookieClient();
     try {
-      await api.delete(`/product?id=${id}`, {
+      await api.delete(`/product/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(products.filter(p => p.id !== id));
