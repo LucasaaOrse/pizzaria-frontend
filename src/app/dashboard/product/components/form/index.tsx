@@ -34,6 +34,7 @@ export function ProductManager({ categories, initialProducts }: Props) {
   const [previewImage, setPreviewImage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const [formState, setFormState] = useState({
     id: "",
@@ -153,7 +154,9 @@ export function ProductManager({ categories, initialProducts }: Props) {
             <span>R$ {product.price.toFixed(2)}</span>
             <div className={styles.actions}>
               <button onClick={() => handleEdit(product)}><Pencil size={16} /></button>
-              <button onClick={() => handleDelete(product.id)}><Trash2 size={16} color="red" /></button>
+              <button onClick={() => setConfirmDeleteId(product.id)}>
+                <Trash2 size={16} color="red" />
+              </button>
             </div>
           </div>
         ))}
@@ -186,6 +189,31 @@ export function ProductManager({ categories, initialProducts }: Props) {
                 <Button name={formState.id ? "Atualizar" : "Cadastrar produto"} />
                 <button type="button" onClick={() => setIsModalOpen(false)} className={styles.cancelBtn}>Cancelar</button>
               </div>
+              {confirmDeleteId && (
+                <div className={styles.modalOverlay}>
+                  <div className={styles.modalContent}>
+                    <h2>Confirmar exclusão</h2>
+                    <p>Tem certeza que deseja excluir este produto?</p>
+                    <div className={styles.modalActions}>
+                      <button
+                        className={styles.deleteBtn}
+                        onClick={() => {
+                          handleDelete(confirmDeleteId);
+                          setConfirmDeleteId(null);
+                        }}
+                      >
+                        Confirmar
+                      </button>
+                      <button
+                        className={styles.cancelBtn}
+                        onClick={() => setConfirmDeleteId(null)}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </form>
           </div>
         </div>

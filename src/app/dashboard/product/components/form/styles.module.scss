@@ -226,3 +226,16 @@
     background-color: var(--dark-600);
   }
 }
+
+.deleteBtn {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  background-color: #c9302c;
+}
