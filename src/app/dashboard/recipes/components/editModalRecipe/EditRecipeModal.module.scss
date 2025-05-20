@@ -173,3 +173,10 @@
 .modalActions button[type="button"].confirm:hover {
   filter: brightness(1.1);
 }
+
+.loading {
+  text-align: center;
+  margin-top: 1rem;
+  font-style: italic;
+  color: #777;
+}

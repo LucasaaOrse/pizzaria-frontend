@@ -73,7 +73,7 @@ export default function RecipeManager() {
 
     if (mode === 'edit') {
       const r = await api.get<{ ingredient_id: number; quantity: number }[]>(
-        `/recipe/${product.id}`,
+        `/recipes/${product.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setExistingIngredients(

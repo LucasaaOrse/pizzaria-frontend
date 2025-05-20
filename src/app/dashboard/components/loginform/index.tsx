@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import styles from "../../../page.module.scss";
+import styles from "./page.module.scss";
 
 export default function LoginForm({
   handleLogin,
@@ -44,7 +44,9 @@ export default function LoginForm({
       />
       <button type="submit" disabled={isPending}>
         {isPending ? (
-          <span className={styles.spinner}></span>
+          <span className={styles.loadingText}>
+            Carregando<span className={styles.dots}></span>
+          </span>
         ) : (
           "Acessar"
         )}
