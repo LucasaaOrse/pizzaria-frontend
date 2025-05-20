@@ -14,6 +14,12 @@ interface Ingredient {
   unit: string;
 }
 
+interface StockItem {
+  id: number;
+  name: string;
+  unit: string;
+}
+
 interface RecipeProduct {
   id: number;
   name: string;
@@ -24,6 +30,9 @@ interface RecipeProduct {
 export default function RecipeManager() {
   const [products, setProducts] = useState<RecipeProduct[]>([]);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<RecipeProduct | null>(null);
+  const [stockItems, setStockItems] = useState<StockItem[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -43,20 +52,41 @@ export default function RecipeManager() {
     load();
   }, []);
 
-  function toggle(id: number) {
-    setExpanded(prev => {
-      const copy = new Set(prev);
-      copy.has(id) ? copy.delete(id) : copy.add(id);
-      return copy;
+  async function handleEditRecipe(product: RecipeProduct) {
+  try {
+    const token = await getCookieClient();
+    const res = await api.get<StockItem[]>("/stock_item", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
+    setStockItems(res.data);
+    setSelectedProduct(product);
+    setShowModal(true);
+  } catch (err) {
+    console.error(err);
+    toast.error("Erro ao carregar ingredientes do estoque");
   }
+}
+
+  function toggle(id: number) {
+  setExpanded(prev => {
+    const newExpanded = new Set(prev); // cria uma nova cópia do Set
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    return newExpanded;
+  });
+}
 
   return (
     <main className={styles.container}>
       <h1 className={styles.title}>Receitas</h1>
       <div className={styles.grid}>
         {products.map(prod => {
-          const isOpen = expanded.has(prod.id);
+          const isOpen = expanded.has(prod.id); // isso deve funcionar corretamente
           return (
             <div key={prod.id} className={styles.card}>
               <header className={styles.header}>
@@ -96,13 +126,40 @@ export default function RecipeManager() {
                       ))}
                     </ul>
                   )}
-                  <button className={styles.editRecipeBtn}>Editar receita</button>
+                  <button
+                    className={styles.editRecipeBtn}
+                    onClick={() => handleEditRecipe(prod)}
+                  >
+                    Editar receita
+                  </button>
                 </div>
               )}
             </div>
           );
         })}
       </div>
+        {showModal && selectedProduct && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modal}>
+              <h2>Editar Receita: {selectedProduct.name}</h2>
+              <ul>
+                {stockItems.map(item => (
+                  <li key={item.id}>
+                    {item.name} ({item.unit}) — 
+                    <input type="number" min="0" step="any" placeholder="Quantidade" />
+                  </li>
+                ))}
+              </ul>
+              <div className={styles.modalActions}>
+                <button onClick={() => setShowModal(false)}>Cancelar</button>
+                <button>Salvar Receita</button>
+              </div>
+            </div>
+          </div>
+        )}
+
     </main>
+    
+
   );
 }
