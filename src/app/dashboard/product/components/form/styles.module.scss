@@ -26,6 +26,7 @@
     color: var(--white);
     border: 1px solid var(--gray-100);
     padding: 0 8px;
+    font-size: 1rem; // melhoria leve na legibilidade
   }
 
   select {
@@ -36,6 +37,7 @@
     min-height: 80px;
     resize: none;
     padding: 8px;
+    line-height: 1.5; // facilita leitura de texto longo
   }
 }
 
@@ -52,6 +54,7 @@
   flex-direction: column;
   margin-bottom: 16px;
   border: 1px solid var(--gray-100);
+  overflow: hidden; // evita imagem ultrapassar o border-radius
 
   input {
     display: none;
@@ -98,6 +101,7 @@
 
     img {
       border-radius: 8px;
+      object-fit: cover; // garante corte adequado da imagem
     }
 
     strong {
@@ -134,4 +138,11 @@
       }
     }
   }
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--white);
 }
