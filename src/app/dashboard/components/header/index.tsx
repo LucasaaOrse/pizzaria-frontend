@@ -42,7 +42,7 @@ export function Header(){
                         Estoque
                     </Link>
                     <Link href="/dashboard/recipes">
-                        Estoque
+                        Receitas
                     </Link>
 
                     <form action={handleLogout}>
