@@ -57,14 +57,17 @@ export default function EditRecipeModal({
   };
 
   const updateQuantity = (id: number, value: string) => {
-    setSelected(prev =>
-      prev.map(item =>
-        item.stockItemId === id
-          ? { ...item, quantity: Number(value) }
-          : item
-      )
-    );
-  };
+  // Remove zeros à esquerda antes de converter
+  const sanitized = value.replace(/^0+(?=\d)/, "");
+  const quantity = sanitized === "" ? 0 : Number(sanitized);
+  setSelected(prev =>
+    prev.map(item =>
+      item.stockItemId === id
+        ? { ...item, quantity }
+        : item
+    )
+  );
+};
 
   const removeIngredient = (id: number) => {
     setSelected(prev => prev.filter(item => item.stockItemId !== id));
