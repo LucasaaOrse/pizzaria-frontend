@@ -123,3 +123,79 @@
   border-radius: 50%;
   background-color: #ff4f4b;
 }
+/* Delete‑order icon button (per row) */
+.deleteOrderBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+  padding: 4px;
+  transition: transform 0.2s, background 0.2s;
+}
+.deleteOrderBtn:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Reuse your existing overlay/modal styles */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: var(--dark-800);
+  color: var(--white);
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+
+  h2 {
+    margin-bottom: 16px;
+  }
+  p {
+    margin-bottom: 24px;
+  }
+}
+
+.modalActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cancelBtn {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--gray-100);
+  color: var(--white);
+  padding: 8px 0;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--dark-700);
+  }
+}
+
+.confirmDeleteBtn {
+  flex: 1;
+  background: var(--red-900);
+  color: var(--white);
+  padding: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: darken(var(--red-900), 10%);
+  }
+}
