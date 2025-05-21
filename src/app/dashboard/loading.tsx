@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import "./loading.module.scss";
+import styles from "./loading.module.scss";
 
 export default function Loading() {
   const [dots, setDots] = useState(".");
@@ -15,13 +15,15 @@ export default function Loading() {
   }, []);
 
   return (
-    <div className="loading-container">
-      <div className="dot-loader">
-        <span className="dot" />
-        <span className="dot" />
-        <span className="dot" />
+    <div className={styles.loadingWrapper}>
+      <div className={styles.loadingContainer}>
+        <div className={styles.dotLoader}>
+          <span className={styles.dot} />
+          <span className={styles.dot} />
+          <span className={styles.dot} />
+        </div>
+        <span className={styles.loadingText}>Carregando{dots}</span>
       </div>
-      <span className="loading-text">Carregando{dots}</span>
     </div>
   );
 }
