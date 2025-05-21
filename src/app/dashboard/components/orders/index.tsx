@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./styles.module.scss";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Trash2 } from "lucide-react";
 import { OrderProps } from "@/lib/order.type";
 import { Modalorder } from "../modal";
 import { use } from "react";
@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { io } from "socket.io-client";
 import { ChatWindow } from "../chatWindow/ChatWindow";
 import clsx from "clsx";
+import { api } from "@/services/api";
+import { getCookieClient } from "@/lib/cookieClient";
 
 interface Props {
   orders: OrderProps[];
@@ -22,6 +24,8 @@ let socket: any;
 export function Orders({ orders }: Props) {
   const { isOpen, onRequestOpen } = use(OrderContext);
   const [currentOrders, setCurrentOrders] = useState<OrderProps[]>(orders);
+  const [orderToDelete, setOrderToDelete] = useState<OrderProps | null>(null);
+
 
   // mantém quais chats estão abertos
   const [openChats, setOpenChats] = useState<string[]>([]);
@@ -113,6 +117,34 @@ export function Orders({ orders }: Props) {
     await onRequestOpen(order_id);
   }
 
+  async function confirmDeleteOrder() {
+    if (!orderToDelete) return;
+    const token = getCookieClient()
+
+    try {
+      await api.delete(
+        `/order/${orderToDelete.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      setCurrentOrders(prev =>
+        prev.filter(o => o.id !== orderToDelete.id)
+      );
+      socket.emit("leaveRoom", { room: String(orderToDelete.id) });
+      toast.success(`Pedido da mesa ${orderToDelete.table} excluído`);
+    } catch (err) {
+      console.error("Erro ao excluir pedido:", err);
+      toast.error("Não foi possível excluir o pedido");
+    } finally {
+      setOrderToDelete(null);
+    }
+  }
+
+
   function handleRefresh() {
     router.refresh();
     toast.success("Pedidos atualizados");
@@ -193,6 +225,14 @@ export function Orders({ orders }: Props) {
                   )}
                 </button>
               )}
+              {/* delete icon for ANY order (pendente ou enviado) */}
+                  <button
+                    className={styles.deleteOrderBtn}
+                    title="Cancelar pedido"
+                    onClick={() => setOrderToDelete(order)}
+                  >
+                    <Trash2 size={20} color="#e74c3c" />
+                  </button>
             </div>
           ))}
         </section>
@@ -213,6 +253,34 @@ export function Orders({ orders }: Props) {
           />
         );
       })}
+      {/* ❗ Delete confirmation modal */}
+      {orderToDelete && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h2>Confirmar exclusão</h2>
+            <p>
+              Deseja realmente cancelar o pedido da mesa{" "}
+              <strong>{orderToDelete.table}</strong>?
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                onClick={() => setOrderToDelete(null)}
+                className={styles.cancelBtn}
+              >
+                Não
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteOrder}
+                className={styles.confirmDeleteBtn}
+              >
+                Sim, excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
