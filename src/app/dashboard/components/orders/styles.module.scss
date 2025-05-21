@@ -196,6 +196,6 @@
   cursor: pointer;
 
   &:hover {
-    background: darken(var(--red-900), 10%);
+    background: brightness(0.9);
   }
 }
