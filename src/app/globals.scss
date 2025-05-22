@@ -9,15 +9,15 @@
   --white: #fff;
   --black: #000;
 
-  --dark-900: #121212;
-  --dark-700: #1c1c1c;
+  --dark-900: #2e1f1f;
+  --dark-700: #3b2f2f;
 
-  --gray-100: #b0b0b0;
-  --green-900: #d4af37;  /* Dourado */
-  --red-900: #800000;    /* Vinho escuro */
+  --gray-100: #a5a5a5;
+  --green-900: #556b2f;   /* Verde oliva */
+  --red-900: #b22222;     /* Vermelho vinho */
 }
 body {
-  background: var(--dark-900);
+  background: var(--dark-700);
 }
 
 button {
