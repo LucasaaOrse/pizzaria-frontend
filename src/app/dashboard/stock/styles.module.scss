@@ -17,7 +17,7 @@
   margin: 24px 0 16px;
 
   h1 {
-    color: var(--white);
+    color: var(--foreground);
   }
 
   button {
@@ -42,7 +42,7 @@
     background: var(--dark-900);
     border: none;
     border-radius: 4px;
-    color: var(--white);
+    color: var(--foreground);
     transition: filter 0.2s;
 
     &:hover {
@@ -51,7 +51,7 @@
   }
 
   .activeFilter {
-    background: var(--green-900);
+    background: var(--primary);
     color: var(--black);
   }
 }
@@ -82,7 +82,7 @@
   background: var(--dark-900);
   padding: 12px 16px;
   border-radius: 8px;
-  color: var(--white);
+  color: var(--foreground);
   font-size: 1rem;
 }
 
@@ -162,7 +162,7 @@
     /* campo inválido */
     &.error input,
     &.error select {
-      border: 2px solid var(--red-900);
+      border: 2px solid var(--danger);
     }
   }
 }
@@ -178,7 +178,7 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    background: var(--green-900);
+    background: var(--primary);
     color: var(--black);
     transition: filter 0.2s;
 
@@ -194,7 +194,17 @@
 
   /* botão de cancelar */
   button[type="button"] {
-    background: var(--red-900);
-    color: var(--white);
+    background: var(--danger);
+    color: var(--foreground);
+  }
+
+  /* Sobrescreve o botão cancelar */
+  button.cancelButton {
+    background: var(--primary);
+    color: var(--black);
+
+    &:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
   }
 }

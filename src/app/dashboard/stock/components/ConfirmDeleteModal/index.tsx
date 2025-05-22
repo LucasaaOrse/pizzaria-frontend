@@ -47,7 +47,7 @@ export default function ConfirmDeleteModal({ item, onClose, onSuccess, onOptimis
       <h2>Remover {item.name}?</h2>
       <p>Esta ação não poderá ser desfeita.</p>
       <footer className={styles.formFooter}>
-        <button type="button" onClick={onClose} disabled={deleting}>Cancelar</button>
+        <button type="button" onClick={onClose} disabled={deleting} className="cancelButton" >Cancelar</button>
         <button type="button" onClick={handleDelete} disabled={deleting}>
           {deleting ? "Removendo…" : "Confirmar"}
         </button>

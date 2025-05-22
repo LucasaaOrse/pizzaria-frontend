@@ -38,7 +38,7 @@ export default function Category(){
             <h1>Nova categoria</h1>
             <form action={handleRedisterCategory} className={styles.form}>
                 <input type="text" name="name" id="name" placeholder="Nome da Categoria ex: Pizza" required className={styles.input}/>
-                <Button name="Cadastrar"/>
+                <Button  name="Cadastrar"/>
             </form>
         </main>
     )

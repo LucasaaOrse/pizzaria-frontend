@@ -7,7 +7,7 @@
 }
 
 .title {
-  color: var(--white);
+  color: var(--beige-100);
   margin-bottom: 24px;
   font-size: 2rem;
   text-align: center;
@@ -20,7 +20,7 @@
 }
 
 .card {
-  background: var(--dark-900);
+  background: var(--dark-700);
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -47,7 +47,7 @@
 }
 
 .info h2 {
-  color: var(--white);
+  color: var(--beige-100);
   font-size: 1.1rem;
 }
 
@@ -56,13 +56,14 @@
   border: none;
   cursor: pointer;
   svg {
-    color: var(--white);
+    color: var(--gold-500);
+
   }
 }
 
 .body {
   padding: 12px 16px;
-  border-top: 1px solid var(--dark-700);
+  border-top: 1px solid var(--dark-800);
 }
 
 .empty {
@@ -81,7 +82,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 6px 0;
-  border-bottom: 1px solid var(--dark-700);
+  border-bottom: 1px solid var(--dark-800);
   color: var(--white);
 
   &:last-child {
@@ -96,7 +97,7 @@
   padding: 4px;
 
   svg {
-    color: var(--green-500);
+    color: var(--primary);
     transition: transform 0.2s;
   }
 
@@ -109,7 +110,7 @@
   margin-top: 12px;
   width: 100%;
   padding: 8px;
-  background: var(--green-900);
+  background: var(--primary);
   color: var(--black);
   border: none;
   border-radius: 4px;
@@ -122,7 +123,7 @@
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--white);
+  border: 2px solid var(--beige-100);
   border-top: 2px solid transparent;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

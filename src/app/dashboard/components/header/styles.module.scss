@@ -1,6 +1,7 @@
 
 .headerContainer{
     height: 5rem;
+    background-color: var(--red-wine); // fundo vermelho bordô
 }
 
 .headerContent{
@@ -19,12 +20,13 @@
         gap: 14px;
 
         a{
-            color: var(--white);
+            color: var(--beige-100); // texto claro
             text-decoration: none;
             transition: color 0.5s;
 
             &:hover{
-                color: var(--red-900);
+                background-color: var(--gold-500);
+                color: var(--black);
             }
         }
 

@@ -14,12 +14,12 @@
 }
 
 .modal {
-  background: var(--dark-900);
+  background: var(--dark-700);
   padding: 24px;
   border-radius: 8px;
   width: 100%;
   max-width: 450px;
-  color: var(--white);
+  color: var(--beige-100);
   animation: fadeIn 0.3s ease-out;
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
 }
@@ -50,7 +50,7 @@
 
 .modalSubtitle {
   font-size: 1rem;
-  color: var(--gray-300);
+  color: var(--beige-100);
   margin-bottom: 16px;
 }
 
@@ -69,15 +69,15 @@
   flex: 1;
   padding: 8px;
   border-radius: 4px;
-  background: var(--dark-700);
-  color: var(--white);
+  background: var(--dark-800);
+  color: var(--beige-100);
   border: none;
   outline: none;
 }
 
 .addBtn {
   padding: 8px 12px;
-  background: var(--green-900);
+  background: var(--primary);
   border: none;
   border-radius: 4px;
   color: var(--black);
@@ -102,7 +102,8 @@
   align-items: center;
   gap: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--dark-700);
+  border-bottom: 1px solid var(--dark-800);
+
 
   &:last-child {
     border-bottom: none;
@@ -116,10 +117,10 @@
 .inputQty {
   width: 80px;
   padding: 6px;
-  background: var(--dark-700);
-  border: none;
+  background: var(--dark-800);
+  border: 1px solid var(--gray-200);
   border-radius: 4px;
-  color: var(--white);
+  color: var(--beige-100);
   text-align: right;
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
@@ -132,11 +133,11 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--red-500);
+  color: var(--red-wine);
   transition: color 0.2s;
 }
 .removeBtn:hover {
-  color: var(--red-300);
+  color: var(--red-dark);
 }
 
 .modalActions {
@@ -155,7 +156,7 @@
 }
 
 .modalActions button[type="button"] {
-  background: var(--red-900);
+  background: var(--red-wine);
   color: var(--white);
 }
 
@@ -165,7 +166,7 @@
 
 .modalActions button[type="submit"],
 .modalActions button[type="button"].confirm {
-  background: var(--green-900);
+  background: var(--primary);
   color: var(--black);
 }
 
@@ -178,5 +179,5 @@
   text-align: center;
   margin-top: 1rem;
   font-style: italic;
-  color: #777;
+  color: var(--gray-100);
 }
