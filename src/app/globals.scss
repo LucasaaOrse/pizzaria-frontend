@@ -9,12 +9,15 @@
   --white: #fff;
   --black: #000;
 
-  --dark-900: #101026;
-  --dark-700: #1d1d2e;
+  --dark-900: #121212;
+  --dark-700: #1c1c1c;
 
-  --gray-100: #8a8a8a;
-  --green-900: #3fffa3;
-  --red-900: #ff3f4b;
+  --gray-100: #b0b0b0;
+  --green-900: #d4af37;  /* Dourado */
+  --red-900: #800000;    /* Vinho escuro */
+}
+body {
+  background: var(--dark-900);
 }
 
 button {
@@ -26,9 +29,6 @@ a {
   text-decoration: none;
 }
 
-body {
-  background: var(--dark-700);
-}
 
 body, input, textarea, select, button {
   font-family: sans-serif;
