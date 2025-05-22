@@ -66,12 +66,12 @@
   height: 60px;
   border-radius: 6px 0 0 6px;
   margin-right: 16px;
-  background-color: var(--green-900); /* padrão: verde */
+  background-color: var(--olive-700);
 }
 
 /* Se precisar de classe para pendente, pode usar: */
 .tag.pending {
-  background-color: #f1c40f; /* amarelo */
+  background-color: var(--gold-500);
 }
 
 /* Ícone de chat (💬) */
@@ -151,6 +151,7 @@
 
 .modalContent {
   background: var(--dark-800);
+  border: 1px solid var(--gold-500);
   color: var(--white);
   padding: 24px;
   border-radius: 8px;
