@@ -1,6 +1,6 @@
 // app/(auth)/page.tsx
 import styles from "./page.module.scss";
-import logoImg from "/public/logo.svg";
+import logoImg from "/public/Logo da Pizzaria Forno di Vino.png";
 import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -39,7 +39,14 @@ export default function Home() {
 
   return (
     <div className={styles.contaninerCenter}>
-      <Image src={logoImg} alt="Logo" />
+      <div className={styles.logoContainer}>
+        <Image
+          src={logoImg}
+          alt="Logo"
+          width={309}
+          className={styles.logo}
+        />
+      </div>
       <section className={styles.login}>
         <LoginForm handleLogin={handleLogin} />
         <Link href="/signup" className={styles.text}>

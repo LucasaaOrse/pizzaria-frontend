@@ -6,27 +6,29 @@
 }
 
 :root {
-  --white: #fff;
-  --black: #0d0d0d;
+  --white: #ffffff;           /* fundo geral – mantém contraste com a logo */
+  --black: #0d0d0d;           /* texto principal – igual ao traço da logo */
 
-  --dark-900: #0d0d0d;      // fundo principal (preto elegante)
-  --dark-800: #1e1a16;      // fundo secundário (com toque quente)
-  --dark-700: #2b211e;      // modais, cards
+  --dark-900: #faf8f5;        /* fundo principal – branco levemente quente */
+  --dark-800: #f2e8d5;        /* fundo secundário – bege claro */
+  --dark-700: #e9d4b0;        /* para cards/modais – amarelo queimado suave */
 
-  --gray-100: #a9a9a9;      // texto secundário
-  --gray-200: #cccccc;      // bordas suaves ou placeholders
+  --gray-100: #8a8a8a;        /* texto secundário */
+  --gray-200: #cccccc;        /* bordas, divisores, placeholders */
 
-  --red-wine: #b22234;      // vermelho bordô para botões e destaques
-  --red-dark: #8b1a1a;      // para hover ou elementos mais fortes
+  --red-wine: #a7342f;        /* botão principal / ação: bordô */
+  --red-dark: #8e1f1a;        /* hover ou alertas */
 
-  --gold-500: #c5a880;      // dourado fosco para ícones e detalhes
-  --beige-100: #f5f5f5;     // texto claro
+  --gold-500: #d9a441;        /* detalhes em dourado queimado */
+  --beige-100: #fef9f0;       /* fundo leve para contrastar com o preto da logo */
 
   --danger: var(--red-wine);
   --primary: var(--gold-500);
   --background: var(--dark-900);
-  --foreground: var(--beige-100);
+  --foreground: var(--black);
 }
+
+
 
 body {
   background: var(--dark-900);

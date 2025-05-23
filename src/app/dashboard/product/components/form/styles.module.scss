@@ -8,7 +8,7 @@
   min-height: 100vh;
 
   h1 {
-    color: var(--white);
+    color: var(--black);
     margin: 24px 0 16px;
   }
 }
@@ -25,7 +25,7 @@
     width: 100%;
     border-radius: 4px;
     background-color: var(--dark-700);
-    color: var(--white);
+    color: var(--black);
     border: 1px solid var(--gray-200);
     padding: 8px;
     font-size: 1rem;
@@ -118,13 +118,13 @@
     }
 
     strong {
-      color: var(--white);
+      color: var(--black);
       flex: 1;
       font-size: 1rem;
     }
 
     span {
-      color: var(--white); // valor branco
+      color: var(--black); // valor branco
       font-size: 0.95rem;
       font-weight: 500;
     }
@@ -176,7 +176,7 @@
   border-radius: 8px;
   width: 100%;
   max-width: 500px;
-  color: var(--white);
+  color: var(--black);
   box-shadow: 0 0 15px rgba(197, 168, 128, 0.7);
 }
 

@@ -8,6 +8,7 @@
   flex-direction: column;
   background: var(--dark-700);
   min-height: 100vh;
+  border-radius: 8px;
 }
 
 .header {
@@ -30,6 +31,11 @@
 .headerButtons {
   display: flex;
   gap: 8px; // ou 12px, se preferir mais espaço
+
+  svg{
+    stroke: black;            /* contorno preto */
+    stroke-width: 1.5px;
+  }
 }
 
 .filters {
@@ -110,6 +116,9 @@
 
     svg {
       color: var(--white);
+      fill: white;              /* preenchimento branco */
+      stroke: black;            /* contorno preto */
+      stroke-width: 1.5px; 
     }
 
     &:hover {
@@ -135,7 +144,8 @@
   border-radius: 8px;
   width: 100%;
   max-width: 400px;
-  color: var(--white);
+  color: var(--black);
+  
 }
 
 .form {
@@ -155,7 +165,7 @@
       border-radius: 4px;
       border: none;
       background: var(--dark-700);
-      color: var(--white);
+      color: var(--black);
       transition: border 0.2s;
     }
 
@@ -179,7 +189,7 @@
     border-radius: 4px;
     cursor: pointer;
     background: var(--primary);
-    color: var(--black);
+    color: var(--white);
     transition: filter 0.2s;
 
     &:disabled {
@@ -195,7 +205,7 @@
   /* botão de cancelar */
   button[type="button"] {
     background: var(--danger);
-    color: var(--foreground);
+    color: var(--white);
   }
 
   /* Sobrescreve o botão cancelar */

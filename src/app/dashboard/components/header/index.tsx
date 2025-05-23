@@ -2,7 +2,7 @@
 import styles from "./styles.module.scss"
 import Link from "next/link"
 import Image from "next/image"
-import logoImg from "/public/logo.svg"
+import logoImg from "/public/Logo da Pizzaria Forno di Vino.png"
 import { LogOutIcon } from "lucide-react"
 import { deleteCookie } from "cookies-next"
 import { useRouter } from "next/navigation"
@@ -23,9 +23,9 @@ export function Header(){
             <div className={styles.headerContent}>
                 <Link href="/dashboard">
                     <Image 
+                        className={styles.logo}
                         alt="Logo Sujeito pizza"
                         src={logoImg}
-                        width={190}
                         height={60}
                         priority={true}
                         quality={100}
