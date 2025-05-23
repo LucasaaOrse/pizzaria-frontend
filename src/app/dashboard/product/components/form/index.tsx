@@ -168,7 +168,7 @@ export function ProductManager({ categories, initialProducts }: Props) {
             <h1>{formState.id ? "Editar produto" : "Novo produto"}</h1>
             <form className={styles.form} action={handleSubmit}>
               <label className={styles.labelImage}>
-                <span><UploadCloud size={30} color="#FFF" /></span>
+                <span><UploadCloud size={30} color="#000" /></span>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFile} />
                 {previewImage && (
                   <Image src={previewImage} alt="Preview" fill className={styles.preview} unoptimized />

@@ -1,14 +1,17 @@
+/* ChatWindow.module.scss */
+
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);           // mais escuro para destacar
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
+
 .window {
-  background: #1d1d2e;
+  background: var(--dark-900);           // #faf8f5
   width: 400px;
   max-width: 90%;
   height: 70%;
@@ -16,91 +19,103 @@
   flex-direction: column;
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+
 .header {
-  background: #101026;
-  padding: 8px 12px;
-  color: #fff;
+  background: var(--dark-800);           // #f2e8d5
+  padding: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  h2 {
+    margin: 0;
+    color: var(--black);                 // #0d0d0d
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  button {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--black);
+    cursor: pointer;
+  }
 }
+
 .messages {
   flex: 1;
   padding: 12px;
   overflow-y: auto;
-}
-.messages .message p {
-  /* certifica que use a cor correta conforme a bolha */
-  color: inherit;
+  background: var(--dark-900);
 }
 
 .message {
   margin-bottom: 8px;
   max-width: 80%;
   word-wrap: break-word;
+
+  &.incoming {
+    background: var(--primary);         // #d9a441
+    color: var(--black);
+    align-self: flex-start;
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+  &.outgoing {
+    background: var(--dark-700);        // #e9d4b0
+    color: var(--black);
+    align-self: flex-end;
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+
+  .author {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-100);             // #8a8a8a
+    margin-bottom: 4px;
+  }
+
+  p {
+    margin: 0;
+    color: inherit;
+  }
 }
-.incoming {
-  /* mensagens do garçom (alinhadas à esquerda) */
-  background: #3fd1ff;       /* azul claro */
-  color: #101026;            /* texto escuro */
-  align-self: flex-start;
-  padding: 6px 10px;
-  border-radius: 6px;
-}
-.outgoing {
-  /* mensagens da cozinha (alinhadas à direita) */
-  background: #ffffff;       /* branco */
-  color: #101026;            /* texto escuro */
-  align-self: flex-end;
-  padding: 6px 10px;
-  border-radius: 6px;
-}
-.author {
-  font-size: 10px;
-  color: #888;
-}
+
 .footer {
-  padding: 8px;
-  background: #101026;
+  padding: 12px;
+  background: var(--dark-800);         // #f2e8d5
   display: flex;
   gap: 8px;
-}
-.footer input {
-  flex: 1;
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: none;
-  background: #2a2a40;  /* mantém esse tom escuro */
-  color: #fff;
-}
-.footer button {
-  padding: 6px 12px;
-  background: #3fffa3;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.chatIcon {
-  position: relative;
-  font-size: 20px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: transform .2s;
-  &:hover { transform: scale(1.1); }
-}
 
-.badge {
-  position: absolute;
-  top: 0; right: 0;
-  width: 8px; height: 8px;
-  background: #ff4f4b;
-  border-radius: 50%;
-  animation: pulse 1s infinite;
-}
+  input {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--gray-200); // #cccccc
+    background: var(--dark-900);       // #faf8f5
+    color: var(--black);
+    font-size: 1rem;
+    &:focus {
+      outline: 2px solid var(--primary);
+    }
+  }
 
-@keyframes pulse {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.4); }
+  button {
+    padding: 8px 16px;
+    background: var(--primary);        // #d9a441
+    color: var(--black);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: filter 0.2s;
+    &:hover {
+      filter: brightness(1.1);
+    }
+  }
 }
