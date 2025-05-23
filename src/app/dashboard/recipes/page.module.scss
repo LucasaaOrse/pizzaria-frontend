@@ -1,5 +1,5 @@
 .container {
-  max-width: 900px;
+  max-width: 960px;
   margin: 40px auto;
   padding: 0 16px;
   display: flex;
@@ -15,32 +15,42 @@
 
 .grid {
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .card {
-  background: var(--dark-700);
-  border-radius: 8px;
+  background: var(--dark-900);
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(197, 168, 128, 0.4);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.01);
+  }
 }
 
 .header {
   display: flex;
   align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--dark-800);
 }
 
 .banner {
   width: 80px;
   height: 80px;
   object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--gold-500);
 }
 
 .info {
   flex: 1;
-  padding: 0 12px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -48,27 +58,35 @@
 
 .info h2 {
   color: var(--beige-100);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .toggleBtn {
   background: transparent;
   border: none;
   cursor: pointer;
+
   svg {
     color: var(--gold-500);
+    transition: transform 0.2s;
 
+    &:hover {
+      transform: scale(1.2);
+    }
   }
 }
 
 .body {
-  padding: 12px 16px;
-  border-top: 1px solid var(--dark-800);
+  padding: 16px 20px;
+  background-color: var(--dark-800);
 }
 
 .empty {
   color: var(--gray-100);
   font-style: italic;
+  text-align: center;
+  margin: 12px 0;
 }
 
 .list {
@@ -81,9 +99,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--dark-800);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--dark-700);
   color: var(--white);
+  font-size: 0.95rem;
 
   &:last-child {
     border-bottom: none;
@@ -97,8 +116,8 @@
   padding: 4px;
 
   svg {
-    color: var(--primary);
-    transition: transform 0.2s;
+    color: var(--gold-500);
+    transition: transform 0.2s ease;
   }
 
   &:hover svg {
@@ -107,26 +126,30 @@
 }
 
 .editRecipeBtn {
-  margin-top: 12px;
+  margin-top: 16px;
   width: 100%;
-  padding: 8px;
-  background: var(--primary);
+  padding: 10px;
+  background: var(--gold-500);
   color: var(--black);
+  font-weight: bold;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: filter 0.2s;
 
   &:hover {
     filter: brightness(1.1);
   }
 }
+
 .spinner {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border: 2px solid var(--beige-100);
   border-top: 2px solid transparent;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  margin: 0 auto;
 }
 
 @keyframes spin {
