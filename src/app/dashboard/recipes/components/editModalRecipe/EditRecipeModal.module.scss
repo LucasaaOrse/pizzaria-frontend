@@ -19,7 +19,7 @@
   border-radius: 8px;
   width: 100%;
   max-width: 450px;
-  color: var(--beige-100);
+  color: var(--black); /* texto principal ajustado para legível */
   animation: fadeIn 0.3s ease-out;
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
 }
@@ -34,23 +34,24 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  color: var(--black); /* título legível */
 }
 
 .closeBtn {
   background: transparent;
   border: none;
   font-size: 1.5rem;
-  color: var(--gray-200);
+  color: var(--gray-700);
   cursor: pointer;
   transition: color 0.2s;
 }
 .closeBtn:hover {
-  color: var(--white);
+  color: var(--black);
 }
 
 .modalSubtitle {
   font-size: 1rem;
-  color: var(--beige-100);
+  color: var(--black);
   margin-bottom: 16px;
 }
 
@@ -69,9 +70,9 @@
   flex: 1;
   padding: 8px;
   border-radius: 4px;
-  background: var(--dark-800);
-  color: var(--beige-100);
-  border: none;
+  background: var(--dark-100);
+  color: var(--black); /* texto legível */
+  border: 1px solid var(--gray-300);
   outline: none;
 }
 
@@ -104,10 +105,11 @@
   padding-bottom: 8px;
   border-bottom: 1px solid var(--dark-800);
 
-
   &:last-child {
     border-bottom: none;
   }
+
+  color: var(--black); /* texto legível */
 }
 
 .selectedItem span {
@@ -117,11 +119,12 @@
 .inputQty {
   width: 80px;
   padding: 6px;
-  background: var(--dark-800);
-  border: 1px solid var(--gray-200);
+  background: var(--dark-100);
+  border: 1px solid var(--gray-400);
   border-radius: 4px;
-  color: var(--beige-100);
+  color: var(--black);
   text-align: right;
+
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -179,5 +182,5 @@
   text-align: center;
   margin-top: 1rem;
   font-style: italic;
-  color: var(--gray-100);
+  color: var(--gray-700); /* mais legível em fundo claro */
 }
