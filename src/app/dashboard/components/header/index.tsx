@@ -27,7 +27,8 @@ export function Header() {
             height={60}
             className={styles.logo}
             priority
-          />
+            style={{ filter: 'invert(1) brightness(2)' }}
+            />
         </Link>
 
         <nav className={styles.nav}>
