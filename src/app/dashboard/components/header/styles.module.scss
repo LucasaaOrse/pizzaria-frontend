@@ -1,50 +1,73 @@
-
-.headerContainer{
-    height: 5rem;
-    background-color: var(--red-wine); // fundo vermelho bordô
+.headerContainer {
+  background-color: var(--red-wine);
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.headerContent{
-    max-width: 1280px;
-    height: 5rem;
-    margin: 0 auto;
-    padding: 0 16px;
+.headerContent {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    nav{
-        display: flex;
-        align-items: center;
-        gap: 14px;
+  .logo {
+    height: 70px;
+    object-fit: contain;
+  }
+}
 
-        a{
-            color: var(--beige-100); // texto claro
-            text-decoration: none;
-            transition: color 0.5s;
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 
-            &:hover{
-                background-color: var(--gold-500);
-                color: var(--black);
-            }
-        }
+  a {
+    color: var(--beige-100);
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.3s;
+    padding: 6px 12px;
+    border-radius: 6px;
 
-        button{
-            border: 0;
-            background-color: transparent;
-            margin-left: 16px;
-            transition: transform 0.8s;
-            &:hover{
-                transform: scale(1.2);
-            }
-        }
+    &:hover {
+      background-color: var(--gold-500);
+      color: var(--black);
     }
-    
+  }
+
+  .logoutBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: 12px;
+    color: var(--beige-100);
+    transition: transform 0.3s, color 0.3s;
+
+    &:hover {
+      transform: scale(1.15);
+      color: var(--gold-500);
+    }
+  }
 }
 
-// .logo {
-//   background-color: var(--beige-100); // ou branco (#fff) ou algo próximo
-//   padding: 4px 8px;
-//   border-radius: 8px; // opcional, para suavizar
-// }
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    height: auto;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+}

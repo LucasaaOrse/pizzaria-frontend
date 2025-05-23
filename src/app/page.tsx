@@ -1,6 +1,6 @@
 // app/(auth)/page.tsx
 import styles from "./page.module.scss";
-import logoImg from "/public/Logo da Pizzaria Forno di Vino.png";
+import logoImg from "/public/Logo forno di vino.png";
 import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -38,21 +38,25 @@ export default function Home() {
   }
 
   return (
-    <div className={styles.contaninerCenter}>
-      <div className={styles.logoContainer}>
+  <div className={styles.loginPage}>
+    <div className={styles.loginCard}>
+      <div className={styles.imageSection}>
         <Image
           src={logoImg}
-          alt="Logo"
-          width={309}
+          alt="Logo da Pizzaria Forno di Vino"
+          width={300}
+          priority
           className={styles.logo}
         />
       </div>
-      <section className={styles.login}>
+      <div className={styles.formSection}>
+        <h1>Bem-vindo de volta</h1>
         <LoginForm handleLogin={handleLogin} />
         <Link href="/signup" className={styles.text}>
           Não possui conta? Cadastre-se
         </Link>
-      </section>
+      </div>
     </div>
-  );
+  </div>
+);
 }

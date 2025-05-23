@@ -179,61 +179,60 @@ export function Orders({ orders }: Props) {
               })
               .map(order => (
             <div key={order.id} className={styles.orderRow}>
-              <button
-                className={styles.orderItem}
-                onClick={() =>
-                  order.draft ? undefined : handleDetailOrder(order.id)
-                }
-                style={{
-                  cursor: order.draft ? "not-allowed" : "pointer",
-                  opacity: order.draft ? 0.6 : 1
-                }}
-              >
-                <div
-                  className={styles.tag}
-                  style={{
-                    backgroundColor: order.draft ? "#f1c40f" : "#3fffa3"
-                  }}
-                />
-                <span>
-                  Mesa {order.table}{" "}
-                  <small style={{ color: "#ccc", marginLeft: 8 }}>
-                    {order.draft ? "pendente" : "enviado"}
-                  </small>
-                </span>
-              </button>
+  <button
+    className={styles.orderItem}
+    onClick={() =>
+      order.draft ? undefined : handleDetailOrder(order.id)
+    }
+    style={{
+      cursor: order.draft ? "not-allowed" : "pointer",
+      opacity: order.draft ? 0.7 : 1
+    }}
+    disabled={order.draft}
+  >
+    <div
+      className={styles.tag}
+      style={{
+        backgroundColor: order.draft ? "#f39c12" : "#2ecc71"
+      }}
+    />
+    <span>
+      Mesa {order.table}
+      <small style={{ color: "#ccc", marginLeft: 8 }}>
+        {order.draft ? "pendente" : "enviado"}
+      </small>
+    </span>
+  </button>
 
-              {order.draft && (
-                <button
-                  className={clsx(styles.chatIcon, {
-                    [styles.chatIconUnread]: unreadIds.includes(String(order.id))
-                  })}
-                  onClick={() => {
-                    const id = String(order.id);
-                    setOpenChats(prev => {
-                      if (!prev.includes(id)) return [...prev, id];
-                      return prev;
-                    });
-                    // limpa a badge ao abrir
-                    setUnreadIds(prev => prev.filter(x => x !== id));
-                  }}
-                  title="Chat Mesa"
-                >
-                  💬
-                  {unreadIds.includes(String(order.id)) && (
-                    <span className={styles.badge} />
-                  )}
-                </button>
-              )}
-              {/* delete icon for ANY order (pendente ou enviado) */}
-                  <button
-                    className={styles.deleteOrderBtn}
-                    title="Cancelar pedido"
-                    onClick={() => setOrderToDelete(order)}
-                  >
-                    <Trash2 size={20} color="#e74c3c" />
-                  </button>
-            </div>
+  {order.draft && (
+    <button
+      className={clsx(styles.chatIcon, {
+        [styles.chatIconUnread]: unreadIds.includes(String(order.id))
+      })}
+      onClick={() => {
+        const id = String(order.id);
+        setOpenChats(prev => (
+          prev.includes(id) ? prev : [...prev, id]
+        ));
+        setUnreadIds(prev => prev.filter(x => x !== id));
+      }}
+      title="Chat Mesa"
+    >
+      💬
+      {unreadIds.includes(String(order.id)) && (
+        <span className={styles.badge} />
+      )}
+    </button>
+  )}
+
+  <button
+    className={styles.deleteOrderBtn}
+    title="Cancelar pedido"
+    onClick={() => setOrderToDelete(order)}
+  >
+    <Trash2 size={20} color="#e74c3c" />
+  </button>
+</div>
           ))}
         </section>
       </main>

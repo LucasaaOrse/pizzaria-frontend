@@ -3,147 +3,139 @@
   margin: 20px auto;
   padding: 0 16px;
   display: flex;
-  justify-content: space-between;
   flex-direction: column;
-
-  h1 {
-    color: var(--foreground); /* texto claro */
-  }
+  gap: 24px;
 }
 
 .header {
   display: flex;
-  gap: 14px;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 24px;
+
+  h1 {
+    color: var(--foreground);
+    font-size: 1.5rem;
+  }
 
   button {
     background-color: transparent;
-    border: 0;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: rotate(90deg);
+    }
   }
 }
 
 .listOrders {
   display: flex;
-  gap: 16px;
   flex-direction: column;
+  gap: 16px;
 }
 
 .emptyItem {
-  color: var(--gray-100); /* cinza claro para texto secundário */
+  color: var(--gray-100);
+  text-align: center;
+  font-size: 1rem;
 }
 
-/* Container de cada linha: pedido + chat */
 .orderRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
 }
 
-/* Botão que mostra mesa e tag colorida */
 .orderItem {
   flex: 1;
   display: flex;
-  background-color: var(--dark-800); /* fundo secundário com toque quente */
   align-items: center;
-  border: 0;
-  font-size: 18px;
+  background-color: #2f2f35; // cinza escuro que contrasta bem com o fundo branco
+  border: 1px solid #444; // borda escura para reforçar o contorno
   border-radius: 8px;
-  color: var(--foreground); /* texto claro */
-  transition: filter 0.3s;
-  text-align: left;
-  padding: 12px 16px; /* um pouco mais de espaçamento */
+  padding: 12px 16px;
+  color: #f5f5f5; // texto bem claro
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
 
   &:hover {
-    filter: brightness(1.15);
+    background-color: #3a3a42;
+    border-color: #666;
+  }
+
+  .tag {
+    width: 9px;
+    height: 60px;
+    border-radius: 6px 0 0 6px;
+    margin-right: 16px;
+    background-color: var(--gold-500); // cor de status dinâmica
+  }
+
+  small {
+    margin-left: 8px;
+    color: #ddd; // texto complementar claro
+    font-size: 0.875rem;
   }
 }
 
-/* A “bolinha” colorida */
-.tag {
-  width: 9px;
-  height: 60px;
-  border-radius: 6px 0 0 6px;
-  margin-right: 16px;
-  background-color: var(--red-wine); /* vermelho bordô para tag de enviado */
-}
-
-/* Se precisar de classe para pendente, pode usar: */
-.tag.pending {
-  background-color: var(--gold-500); /* dourado fosco para pendente */
-}
-
-/* Ícone de chat (💬) */
 .chatIcon {
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 20px;
-  padding: 8px;
-  color: var(--gold-500); /* dourado para destaque */
-  transition: transform 0.1s;
-}
-.chatIcon:hover {
-  transform: scale(1.1);
-  color: var(--primary); /* dourado mais forte no hover */
-}
-
-/* Texto auxiliar “(pendente)” / “(enviado)” */
-.orderItem small {
-  margin-left: 8px;
-  color: var(--gray-100);
-  font-size: 0.75em;
-}
-.chatIcon {
+  font-size: 1.5rem;
+  color: #f5f5f5; // ícone branco vivo
   position: relative;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s, color 0.2s;
+
   &:hover {
     transform: scale(1.2);
+    color: var(--gold-500); // destaca bem no fundo escuro
   }
-  font-size: 20px;
-}
-/* pulse keyframes */
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.3); }
+
+  &.chatIconUnread {
+    animation: pulse 0.6s ease-in-out infinite;
+  }
+
+  .badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ff5c5c; // alerta mais visível
+  }
 }
 
-/* marca o ícone como pulso */
-.chatIconUnread {
-  animation: pulse 0.6s ease-in-out infinite;
-}
-
-/* badge vermelha no canto */
-.badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--red-wine); /* vermelho bordô */
-}
-/* Delete‑order icon button (per row) */
 .deleteOrderBtn {
   background: transparent;
   border: none;
   cursor: pointer;
-  margin-left: 8px;
   padding: 4px;
-  transition: transform 0.2s, background 0.2s;
-}
-.deleteOrderBtn:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s, background-color 0.2s;
+
+  svg {
+    color: #ff4d4d; // tom de vermelho claro visível
+    transition: color 0.2s;
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.05);
+    svg {
+      color: #ff0000; // vermelho forte
+    }
+  }
 }
 
-/* Reuse your existing overlay/modal styles */
 .modalOverlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,55 +143,66 @@
 }
 
 .modalContent {
-  background: var(--dark-800);
-  border: 1px solid var(--gold-500);
-  color: var(--white);
+  background: var(--dark-900); // fundo escuro neutro
+  color: var(--black);
   padding: 24px;
   border-radius: 8px;
   max-width: 400px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 0 10px var(--gold-500);
+  box-shadow: 0 0 15px rgba(197, 168, 128, 0.7);
 
   h2 {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    font-size: 1.25rem;
+    color: var(--black);
   }
+
   p {
     margin-bottom: 24px;
-    color: var(--gray-100);
+    color: var(--black);
+
+    strong {
+      color: var(--black); // destaca o número da mesa
+    }
   }
-}
 
-.modalActions {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
+  .modalActions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
 
-.cancelBtn {
-  flex: 1;
-  background: none;
-  border: 1px solid var(--gray-100);
-  color: var(--white);
-  padding: 8px 0;
-  border-radius: 4px;
-  cursor: pointer;
+    .cancelBtn,
+    .confirmDeleteBtn {
+      flex: 1;
+      padding: 10px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
 
-  &:hover {
-    background: var(--dark-700);
-  }
-}
+    .cancelBtn {
+      background-color: #2b2b2f;
+      border: 1px solid #aaa;
+      color: #f5f5f5;
 
-.confirmDeleteBtn {
-  flex: 1;
-  background: var(--red-wine);
-  color: var(--white);
-  padding: 8px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+      &:hover {
+        background-color: #2b2b2f;
+        border-color: #ffc107;
+        color: #ffc107;
+      }
+    }
 
-  &:hover {
-    background: var(--red-dark);
+    .confirmDeleteBtn {
+      background-color: var(--red-wine);
+      border: none;
+      color: #fff;
+
+      &:hover {
+        filter: brightness(1.2);
+      }
+    }
   }
 }

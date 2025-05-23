@@ -1,5 +1,3 @@
-/* src/app/dashboard/stock/styles.module.scss */
-
 .container {
   max-width: 720px;
   margin: 20px auto;
@@ -30,11 +28,10 @@
 
 .headerButtons {
   display: flex;
-  gap: 8px; // ou 12px, se preferir mais espaço
+  gap: 8px;
 
-  svg{
-    stroke: black;            /* contorno preto */
-    stroke-width: 1.5px;
+  svg {
+    @extend .iconStyled;
   }
 }
 
@@ -53,6 +50,11 @@
 
     &:hover {
       filter: brightness(1.1);
+    }
+
+    &:disabled {
+      color: var(--gray-300);
+      opacity: 0.5;
     }
   }
 
@@ -79,6 +81,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: background 0.2s, opacity 0.2s;
 }
 
 .orderItem {
@@ -90,6 +93,13 @@
   border-radius: 8px;
   color: var(--foreground);
   font-size: 1rem;
+  transition: background 0.2s, opacity 0.2s;
+
+  small {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-left: 8px;
+  }
 }
 
 .tag {
@@ -100,11 +110,16 @@
   background-color: var(--green-900);
 }
 
-/* Contêiner dos botões de ação (add, remove, edit, delete) */
+.tag.outOfStock {
+  background-color: var(--gray-500);
+}
+
+/* Contêiner dos botões de ação */
 .rowActions {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 
   button {
     background: transparent;
@@ -115,10 +130,7 @@
     transition: transform 0.2s, background 0.2s;
 
     svg {
-      color: var(--white);
-      fill: white;              /* preenchimento branco */
-      stroke: black;            /* contorno preto */
-      stroke-width: 1.5px; 
+      @extend .iconStyled;
     }
 
     &:hover {
@@ -145,7 +157,6 @@
   width: 100%;
   max-width: 400px;
   color: var(--black);
-  
 }
 
 .form {
@@ -169,7 +180,6 @@
       transition: border 0.2s;
     }
 
-    /* campo inválido */
     &.error input,
     &.error select {
       border: 2px solid var(--danger);
@@ -202,13 +212,11 @@
     }
   }
 
-  /* botão de cancelar */
   button[type="button"] {
     background: var(--danger);
     color: var(--white);
   }
 
-  /* Sobrescreve o botão cancelar */
   button.cancelButton {
     background: var(--primary);
     color: var(--black);
@@ -216,5 +224,56 @@
     &:hover:not(:disabled) {
       filter: brightness(1.1);
     }
+  }
+}
+
+/* Seção específica para fora de estoque */
+.outOfStockSection {
+  margin-top: 32px;
+
+  h3 {
+    color: var(--danger);
+    margin-bottom: 8px;
+  }
+
+  .orderRow {
+    opacity: 0.6;
+  }
+}
+
+/* Ícone reutilizável */
+.iconStyled {
+  color: var(--white);
+  fill: white;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .filters {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .orderItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    small {
+      margin-left: 0 !important;
+    }
+  }
+
+  .rowActions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }

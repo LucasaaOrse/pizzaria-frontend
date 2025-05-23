@@ -1,74 +1,117 @@
-.contaninerCenter{
+.loginPage {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--background); // fundo principal escuro
-
+  background-color: var(--background);
+  padding: 24px;
 }
 
-.login{
-  margin-top: 20px;
+.loginCard {
+  background: var(--dark-800);
+  border-radius: 12px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  max-width: 900px;
+  width: 100%;
+}
+
+.imageSection {
+  background-color: var(--beige-100);
+  padding: 32px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  width: 600px;
+  flex: 1;
+}
 
-  form{
-    color: var(--foreground); // texto claro
-    padding-bottom: 16px;
-    font-size: 18px;
+.formSection {
+  padding: 32px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+
+  h1 {
+    color: var(--gold-500);
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+  }
+
+  form {
     display: flex;
     flex-direction: column;
-    width: 90%;
     gap: 16px;
   }
 
-  form button{
-    height: 40px;
-    font-size: 16px;
+  button {
     background-color: var(--red-wine);
-    border: 0;
-    border-radius: 8px;
     color: var(--beige-100);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.5s;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
   }
 
-  form button:hover{
+  button:hover {
+    background-color: var(--red-dark);
     transform: scale(1.05);
-    background-color: var(--red-dark); // vermelho mais escuro no hover
   }
-
-  h1{
-    color: var(--gold-500); // destaque no título com dourado
+  
+  a{
+    color: var(--black);
+  }
+  
+  a:hover{
+    transition: all 0.3s;
+    filter: brightness(1.1);
+    transform: scale(1.05);
   }
 
 }
 
-.input{
+.input {
   height: 40px;
-  border: 1px solid var(--gold-500); // contorno dourado elegante
+  border: 1px solid var(--gold-500);
   padding: 0 16px;
   border-radius: 8px;
-  background-color: var(--dark-800);
-  color: var(--black); // texto claro
+  background-color: var(--beige-100); // mais claro para contraste
+  color: var(--black);
   font-size: 16px;
 }
 
-.input::placeholder{
-  color: var(--gray-100); // texto placeholder cinza claro
+.input::placeholder {
+  color: var(--gray-700);
 }
 
-.text{
+.text {
   color: var(--white);
+  font-size: 0.95rem;
   text-decoration: none;
+  margin-top: 12px;
+  text-align: center;
+  display: block;
 }
+
+@media (max-width: 768px) {
+  .loginCard {
+    flex-direction: column;
+  }
+
+  .imageSection {
+    padding: 24px;
+  }
+
+  .formSection {
+    padding: 24px;
+  }
+}
+
 
 @media (max-width: 620px){
   .login{
