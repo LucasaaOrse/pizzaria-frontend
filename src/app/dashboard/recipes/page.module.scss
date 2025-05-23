@@ -20,7 +20,7 @@
 }
 
 .card {
-  background: rgb(242, 232, 213);
+  background: var(--dark-800);
   border-radius: 16px;
   box-shadow: 0 0 12px rgba(197, 168, 128, 0.4);
   overflow: hidden;
@@ -57,7 +57,7 @@
 }
 
 .info h2 {
-  color: var(--dark-800);
+  color: var(--black);
   font-size: 1.2rem;
   font-weight: bold;
 }
@@ -80,11 +80,11 @@
 .body {
   padding: 16px 20px;
   background-color: var(--dark-800);
-  color: var(--white);
+  color: var(--black); // corrigido de white para black
 }
 
 .empty {
-  color: var(--gray-200);
+  color: var(--gray-100); // mais legível que gray-200
   font-style: italic;
   text-align: center;
   margin: 12px 0;
@@ -102,7 +102,7 @@
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid var(--dark-700);
-  color: var(--dark-800);
+  color: var(--black); // antes era dark-800
   font-size: 0.95rem;
 
   &:last-child {

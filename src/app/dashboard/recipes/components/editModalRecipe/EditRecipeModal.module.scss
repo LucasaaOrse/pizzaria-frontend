@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(13, 13, 13, 0.6); // --black com opacidade
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,14 +14,14 @@
 }
 
 .modal {
-  background: var(--dark-700);
+  background: var(--dark-700); // amarelo queimado suave
   padding: 24px;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 100%;
-  max-width: 450px;
-  color: var(--black); /* texto principal ajustado para legível */
+  max-width: 460px;
+  color: var(--black); // texto principal
   animation: fadeIn 0.3s ease-out;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
 @keyframes fadeIn {
@@ -33,15 +33,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  color: var(--black); /* título legível */
+  margin-bottom: 16px;
 }
 
 .closeBtn {
   background: transparent;
   border: none;
   font-size: 1.5rem;
-  color: var(--gray-700);
+  color: var(--gray-100);
   cursor: pointer;
   transition: color 0.2s;
 }
@@ -69,24 +68,25 @@
 .select {
   flex: 1;
   padding: 8px;
-  border-radius: 4px;
-  background: var(--dark-100);
-  color: var(--black); /* texto legível */
-  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  background: var(--dark-800);
+  color: var(--black);
+  border: 1px solid var(--gray-200);
   outline: none;
 }
 
 .addBtn {
   padding: 8px 12px;
-  background: var(--primary);
+  background: var(--primary); // dourado queimado
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   color: var(--black);
+  font-weight: bold;
   cursor: pointer;
   transition: filter 0.2s;
 }
 .addBtn:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.05);
 }
 
 .selectedList {
@@ -103,13 +103,11 @@
   align-items: center;
   gap: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--dark-800);
+  border-bottom: 1px solid var(--gray-200);
 
   &:last-child {
     border-bottom: none;
   }
-
-  color: var(--black); /* texto legível */
 }
 
 .selectedItem span {
@@ -119,8 +117,8 @@
 .inputQty {
   width: 80px;
   padding: 6px;
-  background: var(--dark-100);
-  border: 1px solid var(--gray-400);
+  background: var(--dark-800);
+  border: 1px solid var(--gray-200);
   border-radius: 4px;
   color: var(--black);
   text-align: right;
@@ -147,40 +145,39 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .modalActions button {
   padding: 8px 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: filter 0.2s;
+  font-weight: 500;
 }
 
 .modalActions button[type="button"] {
   background: var(--red-wine);
   color: var(--white);
 }
-
 .modalActions button[type="button"]:hover {
   filter: brightness(1.1);
 }
 
 .modalActions button[type="submit"],
-.modalActions button[type="button"].confirm {
+.modalActions button.confirm {
   background: var(--primary);
   color: var(--black);
 }
-
-.modalActions button[type="submit"].confirm:hover,
-.modalActions button[type="button"].confirm:hover {
-  filter: brightness(1.1);
+.modalActions button[type="submit"]:hover,
+.modalActions button.confirm:hover {
+  filter: brightness(1.05);
 }
 
 .loading {
   text-align: center;
   margin-top: 1rem;
   font-style: italic;
-  color: var(--gray-700); /* mais legível em fundo claro */
+  color: var(--gray-100);
 }
